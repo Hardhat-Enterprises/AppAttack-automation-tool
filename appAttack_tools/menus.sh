@@ -1,5 +1,17 @@
 #!/bin/bash
 
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/automate_recon.sh"
+source "$SCRIPT_DIR/automate_reconnaissance.sh"
+source "$SCRIPT_DIR/automate_vulnerability_scan.sh"
+source "$SCRIPT_DIR/auto_exploitation.sh"
+source "$SCRIPT_DIR/automate_post_exploitation.sh"
+source "$SCRIPT_DIR/automate_reporting.sh"
+
+
+
+
 # Display the Banner
 echo -e "${BYellow}                                                                           ${Color_Off}"
 echo -e "${BRed} █████╗ ██████╗ ██████╗     █████╗ ████████╗████████╗ █████╗  ██████╗██╗  ██╗${Color_Off}"
@@ -21,7 +33,8 @@ display_main_menu() {
     echo -e "${BCyan}2)${NC} ${White}Secure Code Review Tools${NC}"
 	echo -e "${BCyan}3)${NC} ${White}IoT Security Tools${NC}"
     echo -e "${BCyan}4)${NC} ${White}Step by Step Guide${NC}"
-    echo -e "${BCyan}5)${NC} ${White}Exit${NC}"
+    echo -e "${BCyan}5)${NC} ${White}Automated Processes${NC}"  
+    echo -e "${BCyan}6)${NC} ${White}Exit${NC}" 
     echo -e "${BYellow}╚════════════════════════════════╝${NC}"
 }
 
@@ -101,6 +114,20 @@ display_step_by_step_guide_menu() {
     echo -e "${BCyan}2)${NC} ${White}Learn about Secure code review tools${NC}"
 	echo -e "${BCyan}3)${NC} ${White}Learn about IoT Security tools${NC}"
     echo -e "${BCyan}4)${NC} ${White}Go Back${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+}
+
+# Function to display Automated Processes menu
+display_automated_processes_menu() {
+    echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
+    echo -e "${BYellow}║        Automated Processes               ║${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BCyan}1)${NC} ${White}Reconnaissance${NC}"
+    echo -e "${BCyan}2)${NC} ${White}Vulnerability Scanning${NC}"
+    echo -e "${BCyan}3)${NC} ${White}Exploitation${NC}"
+    echo -e "${BCyan}4)${NC} ${White}Post-Exploitation${NC}"
+    echo -e "${BCyan}5)${NC} ${White}Reporting${NC}"
+    echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
@@ -243,6 +270,66 @@ handle_step_by_step_guide(){
         
     done
     
+}
+# Function to handle Automated Processes menu
+handle_automated_processes_menu() {
+    local choice
+    while true; do
+     
+
+   display_automated_processes_menu
+        read -p "Choose an option: " choice
+        case $choice in
+            1) run_automated_reconnaissance_scan ;; # Placeholder for Reconnaissance
+            2) run_vulnerability_scanning_process ;; # Placeholder
+            3) run_exploitation_process ;; # Placeholder
+            4) run_post_exploitation_process ;; # Placeholder
+            5) run_reporting_process ;; # Placeholder
+            0) break ;; # Go back to main menu
+            *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
+        esac
+    done
+}
+
+# Placeholder functions for automated processes (to be implemented later)
+run_automated_reconnaissance_scan() {
+    echo "Running Automated Reconnaissance Scan..."
+    run_reconnaissance_menu
+}
+
+run_vulnerability_scanning_process() {
+    echo "Running Vulnerability Scanning Process..."
+    run_vulnerability_scanning_menu
+}
+
+run_exploitation_process() {
+    echo "Running Exploitation Process..."
+    run_exploitation_menu
+}
+
+run_post_exploitation_process() {
+    echo "Running Post-Exploitation Process..."
+    run_post_exploitation_menu
+}
+
+run_reporting_process() {
+    echo "Running Reporting Process..."
+    local base_dir="$SCRIPT_DIR/../output"
+    local report_file="$base_dir/final_report.md"
+    mkdir -p "$(dirname "$report_file")"
+    > "$report_file"
+    for phase in Reconnaissance Scanning Exploitation "Post-Exploitation"; do
+        phase_dir="$base_dir/$phase"
+        if [[ -d "$phase_dir" ]]; then
+            for input in "$phase_dir"/*; do
+                if [[ -f "$input" ]]; then
+                    tool_name=$(basename "$input" | sed 's/\..*//')
+                    "$SCRIPT_DIR/automate_reporting.sh" -t "$tool_name" -i "$input" -o "$report_file" -p "$phase" -f md
+                fi
+            done
+        fi
+    done
+    echo "Final report generated at $report_file"
 }
 
 handle_step_by_step_guide_SCR(){

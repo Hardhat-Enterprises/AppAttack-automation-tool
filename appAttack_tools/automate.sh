@@ -53,15 +53,40 @@ auto_nikto() {
     echo "Nikto scan completed." >> $LOG_FILE
 }
 
-# Function to run OWASP ZAP
+# Function to run OWASP ZAP automatically in headless mode
 auto_zap() {
-    echo "Running OWASP ZAP..." >> $LOG_FILE
-    zap_output_file="$HOME/zap_scan_output.txt"
-    zap_ai_output=$(zap -quickurl "http://$ip:$port" -cmd)
-    echo "$zap_ai_output" > "$zap_output_file"
-    echo "OWASP ZAP output saved to $zap_output_file" >> $LOG_FILE
-    echo "OWASP ZAP scan completed." >> $LOG_FILE
+    echo "[*] Running OWASP ZAP..." | tee -a "$LOG_FILE"
+
+    local timestamp
+    timestamp=$(date +"%Y%m%d_%H%M%S")
+
+    local zap_report_dir="$HOME/zap_reports"
+    mkdir -p "$zap_report_dir"
+
+    local zap_output_file="$zap_report_dir/zap_output_$timestamp.txt"
+    local zap_html_report="$zap_report_dir/zap_report_$timestamp.html"
+    local zap_json_report="$zap_report_dir/zap_report_$timestamp.json"
+
+    # Run ZAP headless scan and export results
+    /opt/zaproxy/zap.sh \
+        -cmd \
+        -quickurl "http://$ip:$port" \
+        -quickout "$zap_html_report" \
+        -addonupdate \
+        -quickprogress \
+        -jsonreport "$zap_json_report" \
+        > "$zap_output_file" 2>&1
+
+    echo "[+] OWASP ZAP scan completed." | tee -a "$LOG_FILE"
+    echo "[+] Console output saved to $zap_output_file" | tee -a "$LOG_FILE"
+    echo "[+] HTML report saved to $zap_html_report" | tee -a "$LOG_FILE"
+    echo "[+] JSON report saved to $zap_json_report" | tee -a "$LOG_FILE"
+
+    # Optional: Feed results to summarizer/AI pipeline
+    # summarize_zap_output "$zap_output_file"
 }
+
+
 
 # Function to run Wapiti
 auto_wapiti() {

@@ -19,6 +19,11 @@ source "$SCRIPT_DIR/utilities.sh"
 source "$SCRIPT_DIR/step_by_step.sh"
 source "$SCRIPT_DIR/automate.sh"
 
+
+
+
+
+
 # Main function to check and install tools
 main() {
     
@@ -106,7 +111,8 @@ main() {
             2) handle_secure_code_review_tools "$OUTPUT_DIR" ;;
 			3) handle_iot_security_tools "$OUTPUT_DIR" ;;
             4) handle_step_by_step_guide ;;
-            5) echo -e "${YELLOW}Exiting...${NC}"
+	    5) handle_automated_processes_menu ;;
+            6) echo -e "${YELLOW}Exiting...${NC}"
                 log_message "Script ended"
             exit 0 ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}"
