@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 source utilities.sh
 LOG_FILE="$HOME/automated_scan.log"
 
@@ -9,26 +9,33 @@ run_nmap() {
     OUTPUT_DIR=$1
     isIoTUsage=$2
     output_file="${OUTPUT_DIR}/nmap_output.txt"
-    
+
     echo -e "${NC}"
     read -p "Enter IP address or network range to scan (e.g., 192.168.1.0/24): " target
 
+    mkdir -p "$OUTPUT_DIR" #Ensures the folder exists
+
     if [[ "$output_to_file" == "y" ]]; then
         if [[ "$isIoTUsage" == "true" ]]; then
-            nmap_output=$(nmap --top-ports 100 -v "$target" | tee "$output_file")
+            nmap_ai_output=$(nmap --top-ports 100 -v "$target" | tee "$output_file")
         else
-            nmap_output=$(nmap -v "$target" | tee "$output_file")
+            nmap_ai_output=$(nmap -v "$target" | tee "$output_file")
         fi
     else
         if [[ "$isIoTUsage" == "true" ]]; then
-            nmap_output=$(nmap --top-ports 100 -v "$target")
+            nmap_ai_output=$(nmap --top-ports 100 -v "$target")
         else
-            nmap_output=$(nmap -v "$target")
+            nmap_ai_output=$(nmap -v "$target")
         fi
-        echo "$nmap_output"
+        echo "$nmap_ai_output" > "$output_file" #Save to file for parser
     fi
-
-    generate_ai_insights "$nmap_output" "$output_to_file" "$output_file" "nmap"
+    #Add this - call the parser with output file
+    if [[ -f "$output_file" ]]; then
+       python3 parsers/nmap_parser.py "$output_file"
+    else
+       echo -e "${RED}Error: Exceptd scan output file '$output_file' not found.${NC}"
+    fi
+    echo "$nmap_ai_output"
     echo -e "${GREEN}Nmap scan completed.${NC}"
 }
 
@@ -47,7 +54,7 @@ run_bandit() {
         echo -e "${NC}"
         echo "$bandit_output"
     fi
-    generate_ai_insights "generate_ai_insights "$bandit_output"" "$output_to_file" "$output_file"
+    generate_ai_insights "generate_ai_insights" "$bandit_output" "$output_to_file" "$output_file"
     echo -e "${GREEN} Bandit operation completed.${NC}"
 }
 
@@ -103,12 +110,12 @@ run_nikto() {
     if [[ "$output_to_file" == "y" ]]; then
         read -p "Enter the output format (txt, html, xml): " format
         nikto_ai_output=$(nikto -h "$url" -o "$output_file" -Format "$format")
-    echo "$nikto_output" > "$output_file"
+    echo "$nikto_ai_output" > "$output_file"
     else
         nikto_ai_output=$(nikto -h "$url")
         nikto -h "$url"
     fi
-    generate_ai_insights "generate_ai_insights "$nikto_output"" "$output_to_file" "$output_file"
+    echo "$nikto_ai_output"
     echo -e "${GREEN} Nikto Operation completed.${NC}"
 }
 
@@ -141,7 +148,7 @@ run_legion() {
     fi
 
     # Call the function to generate AI insights based on Legion output
-    generate_ai_insights "generate_ai_insights "$legion_output"" "$output_to_file" "$output_file" "$output_to_file" "$output_file"
+    generate_ai_insights "generate_ai_insights" "$legion_output" "$output_to_file" "$output_file" "$output_to_file" "$output_file"
     echo -e "${GREEN} Legion operation completed.${NC}"
 
 
@@ -164,7 +171,7 @@ run_owasp_zap() {
         zap_ai_output=$(zap -quickurl $url 2>&1)
         echo "$zap_ai_output"
     fi
-   auto_zap() {
+    auto_zap() {
     echo "Running OWASP ZAP..." >> $LOG_FILE
     zap_output_file="$HOME/zap_scan_output.txt"
     zap_ai_output=$(zap -quickurl "http://$ip:$port" -cmd)
@@ -172,8 +179,8 @@ run_owasp_zap() {
     echo "OWASP ZAP output saved to $zap_output_file" >> $LOG_FILE
     echo "OWASP ZAP scan completed." >> $LOG_FILE
 }
-    # Call the function to generate AI insights based on OWASP ZAP output
-    generate_ai_insights "generate_ai_insights "$zap_output"" "$output_to_file" "$output_file" "$output_to_file" "$output_file"
+    
+    echo "$zap_ai_output"
     echo -e "${GREEN} OWASP ZAP Operation completed.${NC}"
 }
 
