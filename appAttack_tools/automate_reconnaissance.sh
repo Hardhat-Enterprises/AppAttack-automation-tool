@@ -58,14 +58,14 @@ run_automated_scan() {
 
     echo "Starting automated scans for IP: $ip and Port: $port" >> $LOG_FILE
 
-    run_nmap "$ip" >> $LOG_FILE
-    echo "y" | generate_ai_insights "$nmap_ai_output"
+    run_nmap "$ip" >> $LOG_FILE 
+    generate_ai_insights "$nmap_ai_output" "$output_to_file" "$output_file" "nmap"
     run_nikto "$ip" "$port" >> $LOG_FILE
-    echo "y" | generate_ai_insights "$nikto_ai_output"
+    generate_ai_insights  "$nikto_ai_output" "$output_to_file" "$output_file"
     run_owasp_zap "$ip" "$port" >> $LOG_FILE
-    echo "y" | generate_ai_insights "$zap_ai_output"
+    generate_ai_insights "$zap_ai_output" "$output_to_file" "$output_file" "$output_to_file" "$output_file"
     run_wapiti "$ip" "$port" >> $LOG_FILE
-    echo "y" | generate_ai_insights "$wapiti_ai_output"
+    generate_ai_insights "$wapiti_ai_output"
     echo "Reconnaissance automation completed." >> $LOG_FILE
 
     ## Uncomment to get ai insights on each scan. ##
