@@ -10,10 +10,10 @@ run_nmap() {
     isIoTUsage=$2
     output_file="${OUTPUT_DIR}/nmap_output.txt"
 
+    mkdir -p "$OUTPUT_DIR" # Created the output directory to resolve parsing issue
+    
     echo -e "${NC}"
     read -p "Enter IP address or network range to scan (e.g., 192.168.1.0/24): " target
-
-    mkdir -p "$OUTPUT_DIR" #Ensures the folder exists
 
     if [[ "$output_to_file" == "y" ]]; then
         if [[ "$isIoTUsage" == "true" ]]; then
@@ -27,9 +27,10 @@ run_nmap() {
         else
             nmap_ai_output=$(nmap -v "$target")
         fi
-        echo "$nmap_ai_output" > "$output_file" #Save to file for parser
+        echo "$nmap_ai_output" > "$output_file" # Save results to file so nmap_parser.py can read it
     fi
-    #Add this - call the parser with output file
+    
+    # Run the parser if the Nmap output file exists
     if [[ -f "$output_file" ]]; then
        python3 parsers/nmap_parser.py "$output_file"
     else
