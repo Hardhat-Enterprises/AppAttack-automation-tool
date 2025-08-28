@@ -36,6 +36,12 @@ display_reconnaissance_menu() {
 # === Recon Tool Execution Functions ===
 run_basic_host_discovery() {
     read -p "Enter target subnet (e.g. 192.168.1.0/24): " target
+    
+    if [[ ! "$target" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/[0-9p]+)?$ ]]; then       #^[0-9./]+$]]; then 
+	echo "[-] Invalid subnet format!"
+	return 1 
+    fi
+    
     echo "[*] Running Nmap Ping Scan on $target..."
     nmap -sn "$target"
     echo "[+] Ping scan finished."
