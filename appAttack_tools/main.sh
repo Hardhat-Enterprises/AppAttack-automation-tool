@@ -121,5 +121,7 @@ main() {
     done
 }
 
+export LOG_FILE="$HOME/appattack_toolkit.log"
+
 # Execute main function to start the script
 main
