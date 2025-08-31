@@ -19,6 +19,19 @@ source "$SCRIPT_DIR/utilities.sh"
 source "$SCRIPT_DIR/step_by_step.sh"
 source "$SCRIPT_DIR/automate.sh"
 
+# Discover and load plugins from plugins directory
+PLUGIN_DIR="$SCRIPT_DIR/plugins"
+if [[ -d "$PLUGIN_DIR" ]]; then
+    for plugin in "$PLUGIN_DIR"/*.sh; do
+        source "$plugin"
+        if declare -f run_plugin > /dev/null; then
+            echo "Loaded plugin: $TOOL_NAME"
+            PLUGIN_LIST+=("$TOOL_NAME")
+        fi
+    done
+else
+    echo "Plugin directory not found: $PLUGIN_DIR"
+fi
 
 
 
@@ -107,12 +120,23 @@ main() {
         display_main_menu
         read -p "Choose an option: " main_choice
         case $main_choice in
-            1) handle_penetration_testing_tools "$OUTPUT_DIR" ;;
-            2) handle_secure_code_review_tools "$OUTPUT_DIR" ;;
-			3) handle_iot_security_tools "$OUTPUT_DIR" ;;
-            4) handle_step_by_step_guide ;;
-	    5) handle_automated_processes_menu ;;
-            6) echo -e "${YELLOW}Exiting...${NC}"
+             1)
+                echo "Available plugins: ${PLUGIN_LIST[*]}"
+                read -p "Enter plugin name to run: " plugin_name
+                for plugin in "$PLUGIN_DIR"/*.sh; do
+                    source "$plugin"
+                    if [[ "$TOOL_NAME" == "$plugin_name" ]]; then
+                        run_plugin
+                        break
+                    fi
+                done
+                ;;
+            2) handle_penetration_testing_tools "$OUTPUT_DIR" ;;
+            3) handle_secure_code_review_tools "$OUTPUT_DIR" ;;
+			4) handle_iot_security_tools "$OUTPUT_DIR" ;;
+            5) handle_step_by_step_guide ;;
+	        6) handle_automated_processes_menu ;;
+            7) echo -e "${YELLOW}Exiting...${NC}"
                 log_message "Script ended"
             exit 0 ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}"
