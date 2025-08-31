@@ -255,3 +255,8 @@ generate_ai_insights() {
         fi
     fi
 }
+log_message() {
+    local message="$1"
+    # Appends a timestamp and the message to the central log file
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $message" >> "$LOG_FILE"
+}
