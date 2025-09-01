@@ -20,7 +20,6 @@ run_plugin() {
     done
     echo "</body></html>" >> "$report_file"
     echo "Report generated: $report_file"
-    # Optionally add PDF export or email functionality here
 }
 
 plugin_help() {

@@ -17,7 +17,6 @@ run_plugin() {
     fi
     echo "$nmap_output" > "$output_file"
     echo "Nmap scan completed. Output saved to $output_file"
-    # Optionally call parser and AI insights here
     # python3 ../parsers/nmap_parser.py "$output_file"
 }
 

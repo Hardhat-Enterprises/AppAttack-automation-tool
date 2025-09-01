@@ -21,7 +21,6 @@ run_plugin() {
     echo "--- Snyk Results ---" >> "$output_file"
     echo "$snyk_output" >> "$output_file"
     echo "Secure code review completed. Report saved to $output_file"
-    # Optionally call AI insights here
 }
 
 plugin_help() {
