@@ -116,11 +116,17 @@ main() {
         fi
     fi
     
+    USER_ROLE=${USER_ROLE:-"guest"}
     while true; do
         display_main_menu
         read -p "Choose an option: " main_choice
         case $main_choice in
-             1)
+            1)
+                if [[ "$USER_ROLE" != "admin" ]]; then
+                    echo "Access denied."
+                    log_message "Unauthorized access attempt"
+                    continue
+                fi
                 echo "Available plugins: ${PLUGIN_LIST[*]}"
                 read -p "Enter plugin name to run: " plugin_name
                 for plugin in "$PLUGIN_DIR"/*.sh; do
@@ -133,9 +139,9 @@ main() {
                 ;;
             2) handle_penetration_testing_tools "$OUTPUT_DIR" ;;
             3) handle_secure_code_review_tools "$OUTPUT_DIR" ;;
-			4) handle_iot_security_tools "$OUTPUT_DIR" ;;
+            4) handle_iot_security_tools "$OUTPUT_DIR" ;;
             5) handle_step_by_step_guide ;;
-	        6) handle_automated_processes_menu ;;
+            6) handle_automated_processes_menu ;;
             7) echo -e "${YELLOW}Exiting...${NC}"
                 log_message "Script ended"
             exit 0 ;;

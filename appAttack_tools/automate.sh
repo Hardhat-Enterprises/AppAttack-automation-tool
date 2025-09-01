@@ -102,10 +102,9 @@ auto_wapiti() {
 run_automated_scan() {
     while true; do
         read -p "Enter the target IP address: " ip
-        if validate_ip "$ip"; then
-            break
-        else
-            echo "Invalid IP address. Please enter a valid IPv4 address."
+        if [[ ! "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+            echo "Invalid IP address format."
+            continue
         fi
     done
 
