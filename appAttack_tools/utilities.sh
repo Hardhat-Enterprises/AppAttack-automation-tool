@@ -1,7 +1,10 @@
 #!/bin/bash
+# This file contains utility functions used throughout the AppAttack automation toolkit
+
 # Load .env from fixed path
 ENV_PATH="/opt/appAttack_toolkit/.env"
 if [ -f "$ENV_PATH" ]; then
+    chmod 600 "$ENV_PATH"
     set -a
     source "$ENV_PATH"
     set +a
@@ -110,7 +113,10 @@ save_vulnerabilities() {
 
     # Display the found vulnerabilities
     echo -e "${GREEN}Vulnerabilities found:${NC}"
-    cat "$output_file"
+    redact_sensitive() {
+        sed -E 's/(password|api[_-]?key|secret)[^\n]*/[REDACTED]/gi' "$1"
+    }
+    redact_sensitive "$output_file"
     # Prompt user to save the vulnerabilities to a file
     read -p "Do you want to save the vulnerabilities to a file? (y/n) " save_to_file
     if [[ "$save_to_file" == "y" ]]; then
@@ -254,4 +260,9 @@ generate_ai_insights() {
             echo -e "+-----------------------------+"
         fi
     fi
+}
+log_message() {
+    local message="$1"
+    # Appends a timestamp and the message to the central log file
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $USER - $message" >> "$HOME/appattack_audit.log"
 }
