@@ -64,7 +64,8 @@ display_penetration_testing_tools_menu() {
     echo -e "${BCyan}6)${NC} ${BWhite}SQLmap${NC}: SQL Injection and database takeover tool"
     echo -e "${BCyan}7)${NC} ${BWhite}Metasploit Framework${NC}: Penetration testing framework"
     echo -e "${BCyan}8)${NC} ${BWhite}Wapiti${NC}: Web Application Vulnerability Scanner"
-    echo -e "${BCyan}9)${NC} ${BWhite}Automated Scan${NC}: Run an automated vulnerability scan"
+    echo -e "${BCyan}9)${NC} ${BWhite}Gobuster${NC}: Directory and DNS brute-forcing tool"
+    echo -e "${BCyan}10)${NC} ${BWhite}Automated Scan${NC}: Run an automated vulnerability scan"
     echo -e "${BCyan}0)${NC} ${BWhite}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
@@ -194,8 +195,9 @@ handle_penetration_testing_tools() {
             5) run_john "$OUTPUT_DIR" ;;
             6) run_sqlmap "$OUTPUT_DIR" ;;
             7) run_metasploit "$OUTPUT_DIR" ;;
-	        8) run_wapiti "$OUTPUT_DIR" ;;
-            9) run_automated_scan ;;
+	    8) run_wapiti "$OUTPUT_DIR" ;;
+            9) run_gobuster "$OUTPUT_DIR" ;;
+            10) run_automated_scan ;;
             0) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac

@@ -34,6 +34,24 @@ install_go() {
     fi
 }
 
+install_gobuster() { 
+    #Check if Gobuster is already installed 
+    echo "[*] Checking for Gobuster..."
+    if command -v gobuster >/dev/null 2>&1; then 
+        echo "[+] Gobuster is already installed at: $(command -v gobuster)"
+    #Install Gobuster
+    else 
+        echo "[*] INstalling Gobuster..."
+        sudo apt update
+        sudo apt install -y gobuster
+        if command -v gobuster >/dev/null 2>&1; then 
+            echo "[+] Gobuster successfully installed"
+        else 
+            echo "[!] Gobuster installation failed."
+        fi
+    fi
+}
+
 install_sonarqube() {
     # Check if SonarQube Docker container is already installed
     if ! sudo docker images | grep -q sonarqube; then
@@ -456,7 +474,7 @@ install_umap() {
             make && make install
             cd
             # Create a symbolic link for the Umap executable in /usr/local/bin
-            sudo ln -s python2 /opt/umap/umap-0.8/umap.py /usr/local/bin/umap
+            sudo ln -s python3 /opt/umap/umap-0.8/umap.py /usr/local/bin/umap
             # Check if the symbolic link creation was successful
             if [ $? -eq 0 ]; then
                 # Display success message
@@ -617,3 +635,34 @@ install_reaver() {
         echo -e "${GREEN}Reaver is already installed.${NC}"
     fi
 }
+case $1 in 
+    gobuster)   install_gobuster ;;
+    go)   install_go ;;
+    sonarqube)   install_sonarqube ;;
+    bandit)   install_bandit ;;
+    npm)   install_npm ;;
+    snykcli)   install_snyk_cli ;;
+    brakeman)   install_brakeman ;;
+    osvscanner)   install_osv_scanner ;;
+    nmap)   install_nmap ;;
+    aircrack)   install_aircrack ;;
+    reaver)   install_reaver ;;
+    ncrack)   install_ncrack ;;
+    nikto)   install_nikto ;;
+    legion)   install_legion ;;
+    owaspzap)   install_owasp_zap ;;
+    john)   install_john ;;
+    sqlmap)   install_sqlmap ;;
+    metasploit)   install_metasploit ;;
+    wapiti)   install_wapiti ;;
+    tshark)   install_tshark ;;
+    binwalk)   install_binwalk ;;
+    hashcat)   install_hashcat ;;
+    miranda)   install_miranda ;;
+    umap)   install_umap ;;
+    bettercap)   install_bettercap ;;
+    scrapy)   install_scrapy ;;
+    wifiphisher)   install_wifiphisher ;;
+    *)
+    ;;
+esac
