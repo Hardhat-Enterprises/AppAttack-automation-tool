@@ -529,6 +529,52 @@ install_scapy() {
     fi
 }
 
+# Function to install Subfinder
+install_subfinder() {
+    # Check if Subfinder is already installed
+    if command -v subfinder &> /dev/null; then
+        echo -e "${GREEN}Subfinder is already installed.${NC}"
+        return
+    fi
+
+    echo -e "${CYAN}Installing Subfinder...${NC}"
+
+    # Install via apt (preferred for Debian/Kali/Ubuntu)
+    sudo apt update && sudo apt install -y subfinder
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}Subfinder installed successfully via apt!${NC}"
+    else
+        # Fallback: Install via Go if apt fails
+        echo -e "${YELLOW}apt install failed. Using Go fallback...${NC}"
+
+        # Install Go if not available
+        if ! command -v go &> /dev/null; then
+            echo -e "${CYAN}Installing Go...${NC}"
+            sudo apt install -y golang
+        fi
+
+        # Install Subfinder using Go
+        GO111MODULE=on go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+        if [ $? -eq 0 ]; then
+            # Update PATH to include Go binaries
+            echo 'export PATH=$PATH:'"$(go env GOPATH)"/bin >> ~/.bashrc
+            source ~/.bashrc
+            echo -e "${GREEN}Subfinder installed successfully via Go!${NC}"
+        else
+            echo -e "${RED}Failed to install Subfinder.${NC}"
+            return 1
+        fi
+    fi
+
+    # Verify installation
+    if command -v subfinder &> /dev/null; then
+        echo -e "${GREEN}Subfinder ready: $(subfinder -version)${NC}"
+    else
+        echo -e "${RED}Subfinder installation failed.${NC}"
+        return 1
+    fi
+}
+
 install_wifiphisher() {
     # Colors for output
     CYAN='\033[0;36m'

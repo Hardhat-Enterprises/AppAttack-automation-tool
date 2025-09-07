@@ -709,6 +709,35 @@ run_scapy() {
     echo -e "${GREEN}Scapy operation completed.${NC}"
 }
 
+# Function to run Subfinder
+run_subfinder(){
+OUTPUT_DIR="output"
+mkdir -p "$OUTPUT_DIR"
+
+# Ask for domain input
+read -p "Enter the domain to scan (e.g., example.com): " domain
+
+# Create folder structure for saving results
+ts=$(date +%Y%m%d_%H%M%S)
+domain_dir="${OUTPUT_DIR}/subfinder/${domain}"
+mkdir -p "$domain_dir"
+
+out_txt="${domain_dir}/subfinder_${domain}_${ts}.txt"
+out_json="${domain_dir}/subfinder_${domain}_${ts}.json"
+
+echo "Running Subfinder on $domain..."
+subfinder -d "$domain" -silent -o "$out_txt" -json -oJ "$out_json"
+
+if [[ -s "$out_txt" ]]; then
+    echo "Subfinder completed successfully."
+    echo "Found $(wc -l < "$out_txt") subdomain(s)."
+    echo "TXT results saved at: $out_txt"
+    echo "JSON results saved at: $out_json"
+else
+    echo "No subdomains found or an error occurred."
+fi
+}
+
 # Function to run Wifiphisher
 run_wifiphisher() {
     OUTPUT_DIR=$1
