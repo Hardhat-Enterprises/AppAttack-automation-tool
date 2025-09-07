@@ -9,6 +9,23 @@ run_nmap() {
     OUTPUT_DIR=$1
     isIoTUsage=$2
     output_file="${OUTPUT_DIR}/nmap_output.txt"
+run_gitleaks_scan() {
+    local target_dir="${1:-$SCRIPT_DIR/..}"
+    local report_dir="$SCRIPT_DIR/reports/gitleaks_$(date +%Y-%m-%d_%H-%M-%S)"
+    mkdir -p "$report_dir"
+    local report_file="$report_dir/gitleaks_report.json"
+    local config_file="$SCRIPT_DIR/gitleaks_config.toml" # Optional custom config
+
+    echo "Running Gitleaks scan on $target_dir..."
+    if [[ -f "$config_file" ]]; then
+        gitleaks detect --source "$target_dir" --report-path "$report_file" --config-path "$config_file"
+    else
+        gitleaks detect --source "$target_dir" --report-path "$report_file"
+    fi
+
+    echo "Scan complete. Report saved to $report_file"
+    jq '.findings | length' "$report_file" 2>/dev/null && echo "Secrets found: $(jq '.findings | length' "$report_file")"
+}
 
     mkdir -p "$OUTPUT_DIR" # Created the output directory to resolve parsing issue
     

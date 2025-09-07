@@ -635,6 +635,24 @@ install_reaver() {
         echo -e "${GREEN}Reaver is already installed.${NC}"
     fi
 }
+install_gitleaks() {
+    if command -v gitleaks &> /dev/null; then
+        echo -e "${GREEN}Gitleaks is already installed.${NC}"
+        return
+    fi
+    echo -e "${CYAN}Installing Gitleaks...${NC}"
+    latest_url=$(curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | grep "browser_download_url.*linux_amd64.tar.gz" | cut -d '"' -f 4)
+    if [ -z "$latest_url" ]; then
+        echo -e "${RED}Failed to fetch Gitleaks download URL.${NC}"
+        return 1
+    fi
+    wget -O /tmp/gitleaks.tar.gz "$latest_url"
+    tar -xzf /tmp/gitleaks.tar.gz -C /tmp
+    sudo mv /tmp/gitleaks /usr/local/bin/gitleaks
+    sudo chmod +x /usr/local/bin/gitleaks
+    rm /tmp/gitleaks.tar.gz
+    echo -e "${GREEN}Gitleaks installed successfully!${NC}"
+}
 case $1 in 
     gobuster)   install_gobuster ;;
     go)   install_go ;;
