@@ -40,6 +40,41 @@ run_nmap() {
     echo -e "${GREEN}Nmap scan completed.${NC}"
 }
 
+# Function to run Trivy
+run_trivy() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/trivy_output.txt"
+
+    echo -e "${CYAN}=== Docker/OCI Image Vulnerability Scanner (Trivy) ===${NC}"
+    read -p "Enter Docker/OCI image name (e.g., ubuntu:20.04): " image_name
+
+    # Ensure output directory exists
+    mkdir -p "$OUTPUT_DIR"
+
+    if [[ "$output_to_file" == "y" ]]; then
+        trivy_output=$(trivy image "$image_name" 2>&1 | tee "$output_file")
+    else
+        trivy_output=$(trivy image "$image_name" 2>&1)
+        echo "$trivy_output" > "$output_file"
+        echo -e "${NC}"
+        echo "$trivy_output"
+    fi
+
+    # Parser integration (optional for later, if you add a parser for Trivy)
+    if [[ -f "$output_file" ]]; then
+        echo -e "${CYAN}Trivy output saved to $output_file${NC}"
+    else
+        echo -e "${RED}Error: Expected Trivy output file '$output_file' not found.${NC}"
+    fi
+
+    # AI insights
+    generate_ai_insights "$trivy_output" "$output_to_file" "$output_file" "trivy"
+
+    echo "$trivy_output"
+    echo -e "${GREEN}Trivy scan completed.${NC}"
+}
+
+
 #Function to run Gobuster
 run_gobuster() {
     OUTPUT_DIR=$1
