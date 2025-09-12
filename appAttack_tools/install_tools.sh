@@ -722,6 +722,32 @@ install_reaver() {
         echo -e "${GREEN}Reaver is already installed.${NC}"
     fi
 }
+
+# Function to install Dredd (API testing tool)
+install_dredd() {
+    if ! command -v dredd &> /dev/null; then
+        echo -e "${CYAN}Installing Dredd (API Security Testing Tool)...${NC}"
+
+        # Ensure npm is installed first
+        if ! command -v npm &> /dev/null; then
+            echo -e "${YELLOW}npm not found. Installing npm first...${NC}"
+            sudo apt update && sudo apt install -y npm
+        fi
+
+        # Install Dredd globally
+        sudo npm install -g dredd
+
+        # Verify installation
+        if command -v dredd &> /dev/null; then
+            echo -e "${GREEN}Dredd installed successfully!${NC}"
+        else
+            echo -e "${RED}Failed to install Dredd.${NC}"
+            exit 1
+        fi
+    else
+        echo -e "${GREEN}Dredd is already installed.${NC}"
+    fi
+}
 case $1 in 
     gobuster)   install_gobuster ;;
     trivy)   install_trivy ;;
@@ -751,6 +777,8 @@ case $1 in
     bettercap)   install_bettercap ;;
     scrapy)   install_scrapy ;;
     wifiphisher)   install_wifiphisher ;;
+    dredd)   install_dredd ;;
+    subfinder)   install_subfinder ;;
     *)
     ;;
 esac
