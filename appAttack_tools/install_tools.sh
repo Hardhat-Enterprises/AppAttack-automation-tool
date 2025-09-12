@@ -34,6 +34,47 @@ install_go() {
     fi
 }
 
+#Function to install Trivy for Container image scanning  
+install_trivy() {
+    echo "[*] Checking for Trivy..."
+    
+    if command -v trivy &> /dev/null; then
+        echo "[+] Trivy is already installed"
+        trivy version
+        return
+    fi
+
+    echo "[*] Installing Trivy via official script..."
+
+    # Ensure curl exists
+    sudo apt update
+    sudo apt install -y curl
+
+    # Run install script and capture output
+    sudo sh -c "$(curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh)"
+    if [ -f ./bin/trivy ]; then
+        sudo mv ./bin/trivy /usr/local/bin/trivy
+        sudo chmod +x /usr/local/bin/trivy
+        echo "[+] Trivy moved to /usr/local/bin"
+    fi
+
+    # Ensure PATH includes /usr/local/bin
+    export PATH=$PATH:/usr/local/bin
+    if ! grep -q "/usr/local/bin" ~/.bashrc; then
+        echo 'export PATH=$PATH:/usr/local/bin' >> ~/.bashrc
+    fi
+
+    # Verify installation
+    if command -v trivy &> /dev/null; then
+        echo "[+] Trivy successfully installed"
+        trivy version
+    else
+        echo "[!] Trivy installation failed."
+    fi
+}
+
+
+
 install_gobuster() { 
     #Check if Gobuster is already installed 
     echo "[*] Checking for Gobuster..."
@@ -41,7 +82,7 @@ install_gobuster() {
         echo "[+] Gobuster is already installed at: $(command -v gobuster)"
     #Install Gobuster
     else 
-        echo "[*] INstalling Gobuster..."
+        echo "[*] Installing Gobuster..."
         sudo apt update
         sudo apt install -y gobuster
         if command -v gobuster >/dev/null 2>&1; then 
@@ -683,6 +724,7 @@ install_reaver() {
 }
 case $1 in 
     gobuster)   install_gobuster ;;
+    trivy)   install_trivy ;;
     go)   install_go ;;
     sonarqube)   install_sonarqube ;;
     bandit)   install_bandit ;;
