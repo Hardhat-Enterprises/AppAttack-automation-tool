@@ -119,16 +119,15 @@ auto_wapiti() {
 # Run automated scans
 run_automated_scan() {
     while true; do
-        read -r -p "Enter the target IP address: " ip
-        if validate_ip "$ip"; then
-            break
-        else
-            echo "Invalid IP address. Please enter a valid IPv4 address."
+        read -p "Enter the target IP address: " ip
+        if [[ ! "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+            echo "Invalid IP address format."
+            continue
         fi
     done
 
     while true; do
-        read -r -p "Enter the target port: " port
+        read -p "Enter the target port: " port
         if validate_port "$port"; then
             break
         else
@@ -136,7 +135,7 @@ run_automated_scan() {
         fi
     done
 
-    log "INFO" "Starting automated scans for IP: $ip and Port: $port"
+    echo "Starting automated scans for IP: $ip and Port: $port" >> $LOG_FILE
 
     auto_nmap
     auto_nikto
