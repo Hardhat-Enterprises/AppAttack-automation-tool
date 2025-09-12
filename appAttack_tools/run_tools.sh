@@ -862,3 +862,33 @@ run_ncrack() {
 
     echo -e "${GREEN}Ncrack scan completed. Results saved to $output_file.${NC}"
 }
+
+# Function: Dredd (Newly Added)
+run_dredd() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/dredd_output.txt"
+
+    echo -e "${CYAN}Running Dredd for API Security Testing...${NC}"
+
+    
+    read -p "Enter the path to your OpenAPI/Swagger file (e.g., ./api/swagger.yaml): " api_spec
+    read -p "Enter the server URL to test (e.g., http://localhost:8000): " server_url
+
+    if [[ ! -f "$api_spec" ]]; then
+        echo -e "${RED}Error: API spec file not found at $api_spec${NC}"
+        return 1
+    fi
+
+    mkdir -p "$OUTPUT_DIR"
+
+    if [[ "$output_to_file" == "y" ]]; then
+        dredd_output=$(dredd "$api_spec" "$server_url" | tee "$output_file")
+    else
+        dredd_output=$(dredd "$api_spec" "$server_url")
+        echo "$dredd_output"
+        echo "$dredd_output" > "$output_file"
+    fi
+
+    generate_ai_insights "$dredd_output" "$output_to_file" "$output_file" "dredd"
+    echo -e "${GREEN}Dredd API Security Testing completed.${NC}"
+}
