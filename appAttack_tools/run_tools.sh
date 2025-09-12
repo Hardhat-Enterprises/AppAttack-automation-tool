@@ -40,6 +40,39 @@ run_nmap() {
     echo -e "${GREEN}Nmap scan completed.${NC}"
 }
 
+#Function to run Gobuster
+run_gobuster() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/gobuster_output.txt"
+
+    ech -e "${CYAN}Starting Gobuster scan...${NC}"
+    read -p "Enter target URL (e.g., http://127.0.0.1:8080): " url
+    read -p "Enter wordlist path (default: /usr/share/wordlists/dirb/common.txt): " wordlist
+    wordlist=${wordlist:-/usr/share/wordlists/dirb/common.txt}
+    #ensures the ouput folder exists
+    mkdir -p "$OUTPUT_DIR" 
+
+    if [[ "$output_to_file" == "y" ]]; then
+        gobuster_output=$(gobuster dir -u "$url" -w "$wordlist" 2>&1 | tee "$output_file")
+    else
+        gobuster_output=$(gobuster dir -u "$url" -w "$wordlist" 2>&1)
+        echo "$gobuster_output" > "$output_file" 
+        echo -e "${NC}"
+        echo "$gobuster_output"
+    fi
+    # parser integration 
+    if [[ -f "$output_file" ]]; then
+                echo -e "${CYAN}Gobuster output saved to $output_file${NC}"
+    else
+        echo -e "${RED}Error: Expected Gobuster output file '$output_file' not found.${NC}"
+    fi
+
+    # AI insights 
+    generate_ai_insights "$gobuster_output" "$output_to_file" "$output_file" "gobuster"
+    echo "$gobuster_output"
+    echo -e "${GREEN}Gobuster scan completed.${NC}"
+}
+
 # Function to run Bandit
 run_bandit() {
     OUTPUT_DIR=$1
@@ -657,6 +690,35 @@ run_scapy() {
     fi
     
     echo -e "${GREEN}Scapy operation completed.${NC}"
+}
+
+# Function to run Subfinder
+run_subfinder(){
+OUTPUT_DIR="output"
+mkdir -p "$OUTPUT_DIR"
+
+# Ask for domain input
+read -p "Enter the domain to scan (e.g., example.com): " domain
+
+# Create folder structure for saving results
+ts=$(date +%Y%m%d_%H%M%S)
+domain_dir="${OUTPUT_DIR}/subfinder/${domain}"
+mkdir -p "$domain_dir"
+
+out_txt="${domain_dir}/subfinder_${domain}_${ts}.txt"
+out_json="${domain_dir}/subfinder_${domain}_${ts}.json"
+
+echo "Running Subfinder on $domain..."
+subfinder -d "$domain" -silent -o "$out_txt" -json -oJ "$out_json"
+
+if [[ -s "$out_txt" ]]; then
+    echo "Subfinder completed successfully."
+    echo "Found $(wc -l < "$out_txt") subdomain(s)."
+    echo "TXT results saved at: $out_txt"
+    echo "JSON results saved at: $out_json"
+else
+    echo "No subdomains found or an error occurred."
+fi
 }
 
 # Function to run Wifiphisher
