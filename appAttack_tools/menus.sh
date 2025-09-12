@@ -31,10 +31,11 @@ display_main_menu() {
     echo -e "${BYellow}╚════════════════════════════════╝${NC}"
     echo -e "${BCyan}1)${NC} ${White}Penetration Testing Tools${NC}"
     echo -e "${BCyan}2)${NC} ${White}Secure Code Review Tools${NC}"
-	echo -e "${BCyan}3)${NC} ${White}IoT Security Tools${NC}"
+    echo -e "${BCyan}3)${NC} ${White}IoT Security Tools${NC}"
     echo -e "${BCyan}4)${NC} ${White}Step by Step Guide${NC}"
     echo -e "${BCyan}5)${NC} ${White}Automated Processes${NC}"  
-    echo -e "${BCyan}6)${NC} ${White}Exit${NC}" 
+    echo -e "${BCyan}6)${NC} ${White}Container Security Tools${NC}"
+    echo -e "${BCyan}7)${NC} ${White}Exit${NC}" 
     echo -e "${BYellow}╚════════════════════════════════╝${NC}"
 }
 
@@ -50,6 +51,15 @@ display_main_menu() {
     
 #}
 
+#Function to display Conatainer Security Tools menu, qdd more tools here later (e.g., Grype, Dockle, Clair, etc.)
+display_container_security_tools_menu() {
+    echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
+    echo -e "${BYellow}║        Container Security Tools            ║${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BCyan}1)${NC} ${White}Trivy: Scan Docker/OCI images for vulnerabilities${NC}"
+    echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+}
 
 # Function to display Penetration Testing Tools menu
 display_penetration_testing_tools_menu() {
@@ -83,7 +93,8 @@ display_secure_code_review_tools_menu() {
     echo -e "${BCyan}4)${NC} ${White}bandit: Security linter for Python code${NC}"
         echo -e "${BCyan}5)${NC} ${White}Gitleaks: Secret scanning tool${NC}"
     echo -e "${BCyan}5)${NC} ${White}SonarQube: Continuous inspection of code quality and security${NC}"
-    echo -e "${BCyan}6)${NC} ${White}Go Back${NC}"
+	echo -e "${BCyan}6)${NC} ${White}Dredd: API Security Testing (OpenAPI/Swagger)${NC}"
+    echo -e "${BCyan}7)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
@@ -221,7 +232,8 @@ handle_secure_code_review_tools() {
             4) run_bandit "$OUTPUT_DIR" ;;
             5) run_sonarqube "$OUTPUT_DIR" ;;
             6) run_gitleaks_scan "$OUTPUT_DIR" ;;
-            7) break ;;
+            7) run_dredd "$OUTPUT_DIR" ;;
+            8) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac
     done
@@ -296,6 +308,22 @@ handle_automated_processes_menu() {
         esac
     done
 }
+
+# Function for Container Security Tools
+handle_container_security_tools() {
+    local OUTPUT_DIR=$1
+    local choice
+    while true; do
+        display_container_security_tools_menu
+        read -p "Choose an option: " choice
+        case $choice in
+            1) run_trivy "$OUTPUT_DIR" ;;
+            0) break ;;
+            *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
+        esac
+    done
+}
+
 
 # Placeholder functions for automated processes (to be implemented later)
 run_automated_reconnaissance_scan() {
@@ -410,7 +438,7 @@ handle_step_by_step_guide_IoT(){
             2) handle_step_by_step_IoT_bettercap;;
             3) handle_step_by_step_IoT_scapy;;
             4) handle_step_by_step_IoT_wifiphisher;;
-			5) handle_step_by_step_IoT_reaver;;
+        	5) handle_step_by_step_IoT_reaver;;
             6) break;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
             

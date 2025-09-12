@@ -102,6 +102,10 @@ main() {
     install_wifiphisher
 	# Check and install reaver
 	install_reaver
+   #check and install gobuster
+   install_gobuster
+   #check and install Trivy
+   install_trivy    
     
     # Check for updates for the installed tools
     check_updates
@@ -142,7 +146,8 @@ main() {
             4) handle_iot_security_tools "$OUTPUT_DIR" ;;
             5) handle_step_by_step_guide ;;
             6) handle_automated_processes_menu ;;
-            7) echo -e "${YELLOW}Exiting...${NC}"
+            7) handle_container_security_tools "$OUTPUT_DIR" ;;
+            8) echo -e "${YELLOW}Exiting...${NC}"
                 log_message "Script ended"
             exit 0 ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}"
