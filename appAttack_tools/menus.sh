@@ -92,7 +92,8 @@ display_secure_code_review_tools_menu() {
     echo -e "${BCyan}3)${NC} ${White}brakeman: Scan a Ruby on Rails application for security vulnerabilities${NC}"
     echo -e "${BCyan}4)${NC} ${White}bandit: Security linter for Python code${NC}"
     echo -e "${BCyan}5)${NC} ${White}SonarQube: Continuous inspection of code quality and security${NC}"
-    echo -e "${BCyan}6)${NC} ${White}Go Back${NC}"
+	echo -e "${BCyan}6)${NC} ${White}Dredd: API Security Testing (OpenAPI/Swagger)${NC}"
+    echo -e "${BCyan}7)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
@@ -229,7 +230,8 @@ handle_secure_code_review_tools() {
             3) run_brakeman "$OUTPUT_DIR" ;;
             4) run_bandit "$OUTPUT_DIR" ;;
             5) run_sonarqube "$OUTPUT_DIR" ;;
-            6) break ;;
+			6) run_dredd "$OUTPUT_DIR" ;;
+            7) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac
     done
