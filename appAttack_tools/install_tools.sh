@@ -767,6 +767,17 @@ install_dredd() {
     fi
 
 }
+
+install_scoutsuite() {
+    if command -v scoutsuite &> /dev/null; then
+        echo "ScoutSuite is already installed."
+        return
+    fi
+    echo "Installing ScoutSuite..."
+    pip3 install scoutsuite
+    echo "ScoutSuite installed successfully."
+}
+
 case $1 in 
     gobuster)   install_gobuster ;;
     trivy)   install_trivy ;;
