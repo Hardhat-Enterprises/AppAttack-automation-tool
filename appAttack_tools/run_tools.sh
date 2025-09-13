@@ -9,6 +9,37 @@ run_nmap() {
     OUTPUT_DIR=$1
     isIoTUsage=$2
     output_file="${OUTPUT_DIR}/nmap_output.txt"
+run_scoutsuite_scan() {
+    local cloud_provider="$1" # aws, azure, gcp
+    local profile="$2"        # Optional: AWS profile, Azure creds, etc.
+    local report_dir="$HOME/scoutsuite_reports"
+    mkdir -p "$report_dir"
+    local timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+    local report_file="$report_dir/scoutsuite_${cloud_provider}_$timestamp.html"
+
+    echo "Running ScoutSuite scan for $cloud_provider..."
+    case "$cloud_provider" in
+        aws)
+            if [[ -n "$profile" ]]; then
+                scoutsuite -p aws --profile "$profile" --report-dir "$report_dir"
+            else
+                scoutsuite -p aws --report-dir "$report_dir"
+            fi
+            ;;
+        azure)
+            scoutsuite -p azure --report-dir "$report_dir"
+            ;;
+        gcp)
+            scoutsuite -p gcp --report-dir "$report_dir"
+            ;;
+        *)
+            echo "Unsupported cloud provider: $cloud_provider"
+            return 1
+            ;;
+    esac
+    echo "ScoutSuite scan complete. Report saved to $report_file"
+}
+
 run_gitleaks_scan() {
     local target_dir="${1:-$SCRIPT_DIR/..}"
     local report_dir="$SCRIPT_DIR/reports/gitleaks_$(date +%Y-%m-%d_%H-%M-%S)"

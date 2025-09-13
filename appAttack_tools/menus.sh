@@ -35,7 +35,8 @@ display_main_menu() {
     echo -e "${BCyan}4)${NC} ${White}Step by Step Guide${NC}"
     echo -e "${BCyan}5)${NC} ${White}Automated Processes${NC}"  
     echo -e "${BCyan}6)${NC} ${White}Container Security Tools${NC}"
-    echo -e "${BCyan}7)${NC} ${White}Exit${NC}" 
+    echo -e "${BCyan}7)${NC} ${White}Cloud Security Tools${NC}"
+    echo -e "${BCyan}8)${NC} ${White}Exit${NC}" 
     echo -e "${BYellow}╚════════════════════════════════╝${NC}"
 }
 
@@ -324,6 +325,31 @@ handle_container_security_tools() {
     done
 }
 
+# Function for Cloud Security Tools
+display_cloud_security_menu() {
+    echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
+    echo -e "${BYellow}║           Cloud Security Tools             ║${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BCyan}1)${NC} ${White}ScoutSuite (Audit AWS/Azure/GCP)${NC}"
+    echo -e "${BCyan}2)${NC} ${White}Go Back${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+}
+
+handle_cloud_security_tools() {
+    while true; do
+        display_cloud_security_menu
+        read -p "Choose a cloud security tool: " cloud_choice
+        case $cloud_choice in
+            1)
+                read -p "Enter cloud provider (aws/azure/gcp): " provider
+                read -p "Enter profile (leave blank for default): " profile
+                run_scoutsuite_scan "$provider" "$profile"
+                ;;
+            2) break ;;
+            *) echo "Invalid choice, try again." ;;
+        esac
+    done
+}
 
 # Placeholder functions for automated processes (to be implemented later)
 run_automated_reconnaissance_scan() {
