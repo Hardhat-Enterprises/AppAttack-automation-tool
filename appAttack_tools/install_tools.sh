@@ -34,6 +34,65 @@ install_go() {
     fi
 }
 
+#Function to install Trivy for Container image scanning  
+install_trivy() {
+    echo "[*] Checking for Trivy..."
+    
+    if command -v trivy &> /dev/null; then
+        echo "[+] Trivy is already installed"
+        trivy version
+        return
+    fi
+
+    echo "[*] Installing Trivy via official script..."
+
+    # Ensure curl exists
+    sudo apt update
+    sudo apt install -y curl
+
+    # Run install script and capture output
+    sudo sh -c "$(curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh)"
+    if [ -f ./bin/trivy ]; then
+        sudo mv ./bin/trivy /usr/local/bin/trivy
+        sudo chmod +x /usr/local/bin/trivy
+        echo "[+] Trivy moved to /usr/local/bin"
+    fi
+
+    # Ensure PATH includes /usr/local/bin
+    export PATH=$PATH:/usr/local/bin
+    if ! grep -q "/usr/local/bin" ~/.bashrc; then
+        echo 'export PATH=$PATH:/usr/local/bin' >> ~/.bashrc
+    fi
+
+    # Verify installation
+    if command -v trivy &> /dev/null; then
+        echo "[+] Trivy successfully installed"
+        trivy version
+    else
+        echo "[!] Trivy installation failed."
+    fi
+}
+
+
+
+install_gobuster() { 
+    #Check if Gobuster is already installed 
+    echo "[*] Checking for Gobuster..."
+    if command -v gobuster >/dev/null 2>&1; then 
+        echo "[+] Gobuster is already installed at: $(command -v gobuster)"
+    #Install Gobuster
+    else 
+        echo "[*] Installing Gobuster..."
+        sudo apt update
+        sudo apt install -y gobuster
+        if command -v gobuster >/dev/null 2>&1; then 
+            echo "[+] Gobuster successfully installed"
+        else 
+            echo "[!] Gobuster installation failed."
+        fi
+    fi
+}
+
 install_sonarqube() {
     # Check if SonarQube Docker container is already installed
     if ! sudo docker images | grep -q sonarqube; then
@@ -456,7 +515,7 @@ install_umap() {
             make && make install
             cd
             # Create a symbolic link for the Umap executable in /usr/local/bin
-            sudo ln -s python2 /opt/umap/umap-0.8/umap.py /usr/local/bin/umap
+            sudo ln -s python3 /opt/umap/umap-0.8/umap.py /usr/local/bin/umap
             # Check if the symbolic link creation was successful
             if [ $? -eq 0 ]; then
                 # Display success message
@@ -508,6 +567,52 @@ install_scapy() {
         fi
     else
         echo -e "${GREEN}Scapy is already installed.${NC}"
+    fi
+}
+
+# Function to install Subfinder
+install_subfinder() {
+    # Check if Subfinder is already installed
+    if command -v subfinder &> /dev/null; then
+        echo -e "${GREEN}Subfinder is already installed.${NC}"
+        return
+    fi
+
+    echo -e "${CYAN}Installing Subfinder...${NC}"
+
+    # Install via apt (preferred for Debian/Kali/Ubuntu)
+    sudo apt update && sudo apt install -y subfinder
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}Subfinder installed successfully via apt!${NC}"
+    else
+        # Fallback: Install via Go if apt fails
+        echo -e "${YELLOW}apt install failed. Using Go fallback...${NC}"
+
+        # Install Go if not available
+        if ! command -v go &> /dev/null; then
+            echo -e "${CYAN}Installing Go...${NC}"
+            sudo apt install -y golang
+        fi
+
+        # Install Subfinder using Go
+        GO111MODULE=on go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+        if [ $? -eq 0 ]; then
+            # Update PATH to include Go binaries
+            echo 'export PATH=$PATH:'"$(go env GOPATH)"/bin >> ~/.bashrc
+            source ~/.bashrc
+            echo -e "${GREEN}Subfinder installed successfully via Go!${NC}"
+        else
+            echo -e "${RED}Failed to install Subfinder.${NC}"
+            return 1
+        fi
+    fi
+
+    # Verify installation
+    if command -v subfinder &> /dev/null; then
+        echo -e "${GREEN}Subfinder ready: $(subfinder -version)${NC}"
+    else
+        echo -e "${RED}Subfinder installation failed.${NC}"
+        return 1
     fi
 }
 
@@ -617,3 +722,93 @@ install_reaver() {
         echo -e "${GREEN}Reaver is already installed.${NC}"
     fi
 }
+
+install_gitleaks() {
+    if command -v gitleaks &> /dev/null; then
+        echo -e "${GREEN}Gitleaks is already installed.${NC}"
+        return
+    fi
+    echo -e "${CYAN}Installing Gitleaks...${NC}"
+    latest_url=$(curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | grep "browser_download_url.*linux_amd64.tar.gz" | cut -d '"' -f 4)
+    if [ -z "$latest_url" ]; then
+        echo -e "${RED}Failed to fetch Gitleaks download URL.${NC}"
+        return 1
+    fi
+    wget -O /tmp/gitleaks.tar.gz "$latest_url"
+    tar -xzf /tmp/gitleaks.tar.gz -C /tmp
+    sudo mv /tmp/gitleaks /usr/local/bin/gitleaks
+    sudo chmod +x /usr/local/bin/gitleaks
+    rm /tmp/gitleaks.tar.gz
+    echo -e "${GREEN}Gitleaks installed successfully!${NC}"
+
+# Function to install Dredd (API testing tool)
+install_dredd() {
+    if ! command -v dredd &> /dev/null; then
+        echo -e "${CYAN}Installing Dredd (API Security Testing Tool)...${NC}"
+
+        # Ensure npm is installed first
+        if ! command -v npm &> /dev/null; then
+            echo -e "${YELLOW}npm not found. Installing npm first...${NC}"
+            sudo apt update && sudo apt install -y npm
+        fi
+
+        # Install Dredd globally
+        sudo npm install -g dredd
+
+        # Verify installation
+        if command -v dredd &> /dev/null; then
+            echo -e "${GREEN}Dredd installed successfully!${NC}"
+        else
+            echo -e "${RED}Failed to install Dredd.${NC}"
+            exit 1
+        fi
+    else
+        echo -e "${GREEN}Dredd is already installed.${NC}"
+    fi
+
+}
+
+install_scoutsuite() {
+    if command -v scoutsuite &> /dev/null; then
+        echo "ScoutSuite is already installed."
+        return
+    fi
+    echo "Installing ScoutSuite..."
+    pip3 install scoutsuite
+    echo "ScoutSuite installed successfully."
+}
+
+case $1 in 
+    gobuster)   install_gobuster ;;
+    trivy)   install_trivy ;;
+    go)   install_go ;;
+    sonarqube)   install_sonarqube ;;
+    bandit)   install_bandit ;;
+    npm)   install_npm ;;
+    snykcli)   install_snyk_cli ;;
+    brakeman)   install_brakeman ;;
+    osvscanner)   install_osv_scanner ;;
+    nmap)   install_nmap ;;
+    aircrack)   install_aircrack ;;
+    reaver)   install_reaver ;;
+    ncrack)   install_ncrack ;;
+    nikto)   install_nikto ;;
+    legion)   install_legion ;;
+    owaspzap)   install_owasp_zap ;;
+    john)   install_john ;;
+    sqlmap)   install_sqlmap ;;
+    metasploit)   install_metasploit ;;
+    wapiti)   install_wapiti ;;
+    tshark)   install_tshark ;;
+    binwalk)   install_binwalk ;;
+    hashcat)   install_hashcat ;;
+    miranda)   install_miranda ;;
+    umap)   install_umap ;;
+    bettercap)   install_bettercap ;;
+    scrapy)   install_scrapy ;;
+    wifiphisher)   install_wifiphisher ;;
+    dredd)   install_dredd ;;
+    subfinder)   install_subfinder ;;
+    *)
+    ;;
+esac

@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 source utilities.sh
 LOG_FILE="$HOME/automated_scan.log"
 
@@ -9,6 +9,56 @@ run_nmap() {
     OUTPUT_DIR=$1
     isIoTUsage=$2
     output_file="${OUTPUT_DIR}/nmap_output.txt"
+run_scoutsuite_scan() {
+    local cloud_provider="$1" # aws, azure, gcp
+    local profile="$2"        # Optional: AWS profile, Azure creds, etc.
+    local report_dir="$HOME/scoutsuite_reports"
+    mkdir -p "$report_dir"
+    local timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+    local report_file="$report_dir/scoutsuite_${cloud_provider}_$timestamp.html"
+
+    echo "Running ScoutSuite scan for $cloud_provider..."
+    case "$cloud_provider" in
+        aws)
+            if [[ -n "$profile" ]]; then
+                scoutsuite -p aws --profile "$profile" --report-dir "$report_dir"
+            else
+                scoutsuite -p aws --report-dir "$report_dir"
+            fi
+            ;;
+        azure)
+            scoutsuite -p azure --report-dir "$report_dir"
+            ;;
+        gcp)
+            scoutsuite -p gcp --report-dir "$report_dir"
+            ;;
+        *)
+            echo "Unsupported cloud provider: $cloud_provider"
+            return 1
+            ;;
+    esac
+    echo "ScoutSuite scan complete. Report saved to $report_file"
+}
+
+run_gitleaks_scan() {
+    local target_dir="${1:-$SCRIPT_DIR/..}"
+    local report_dir="$SCRIPT_DIR/reports/gitleaks_$(date +%Y-%m-%d_%H-%M-%S)"
+    mkdir -p "$report_dir"
+    local report_file="$report_dir/gitleaks_report.json"
+    local config_file="$SCRIPT_DIR/gitleaks_config.toml" # Optional custom config
+
+    echo "Running Gitleaks scan on $target_dir..."
+    if [[ -f "$config_file" ]]; then
+        gitleaks detect --source "$target_dir" --report-path "$report_file" --config-path "$config_file"
+    else
+        gitleaks detect --source "$target_dir" --report-path "$report_file"
+    fi
+
+    echo "Scan complete. Report saved to $report_file"
+    jq '.findings | length' "$report_file" 2>/dev/null && echo "Secrets found: $(jq '.findings | length' "$report_file")"
+}
+
+    mkdir -p "$OUTPUT_DIR" # Created the output directory to resolve parsing issue
     
     echo -e "${NC}"
     read -p "Enter IP address or network range to scan (e.g., 192.168.1.0/24): " target
@@ -24,8 +74,9 @@ run_nmap() {
         if [[ "$isIoTUsage" == "true" ]]; then
             nmap_ai_output=$(nmap --top-ports 100 -v "$target")
         else
-            nmap_output=$(nmap -v "$target")
+            nmap_ai_output=$(nmap -v "$target")
         fi
+
 	echo "$nmap_output"
         echo "$nmap_output" > "$output_file"
     fi
@@ -37,8 +88,89 @@ run_nmap() {
     generate_ai_insights "$nmap_output" "$output_to_file" "$output_file" "nmap"
     
     echo -e "${GREEN}Nmap scan completed.${NC}" 
+
+        echo "$nmap_ai_output" > "$output_file" # Save results to file so nmap_parser.py can read it
+    fi
+    
+    # Run the parser if the Nmap output file exists
+    if [[ -f "$output_file" ]]; then
+       python3 parsers/nmap_parser.py "$output_file"
+    else
+       echo -e "${RED}Error: Exceptd scan output file '$output_file' not found.${NC}"
+    fi
+    echo "$nmap_ai_output"
+    echo -e "${GREEN}Nmap scan completed.${NC}"
+
 }
      
+
+# Function to run Trivy
+run_trivy() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/trivy_output.txt"
+
+    echo -e "${CYAN}=== Docker/OCI Image Vulnerability Scanner (Trivy) ===${NC}"
+    read -p "Enter Docker/OCI image name (e.g., ubuntu:20.04): " image_name
+
+    # Ensure output directory exists
+    mkdir -p "$OUTPUT_DIR"
+
+    if [[ "$output_to_file" == "y" ]]; then
+        trivy_output=$(trivy image "$image_name" 2>&1 | tee "$output_file")
+    else
+        trivy_output=$(trivy image "$image_name" 2>&1)
+        echo "$trivy_output" > "$output_file"
+        echo -e "${NC}"
+        echo "$trivy_output"
+    fi
+
+    # Parser integration (optional for later, if you add a parser for Trivy)
+    if [[ -f "$output_file" ]]; then
+        echo -e "${CYAN}Trivy output saved to $output_file${NC}"
+    else
+        echo -e "${RED}Error: Expected Trivy output file '$output_file' not found.${NC}"
+    fi
+
+    # AI insights
+    generate_ai_insights "$trivy_output" "$output_to_file" "$output_file" "trivy"
+
+    echo "$trivy_output"
+    echo -e "${GREEN}Trivy scan completed.${NC}"
+}
+
+
+#Function to run Gobuster
+run_gobuster() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/gobuster_output.txt"
+
+    ech -e "${CYAN}Starting Gobuster scan...${NC}"
+    read -p "Enter target URL (e.g., http://127.0.0.1:8080): " url
+    read -p "Enter wordlist path (default: /usr/share/wordlists/dirb/common.txt): " wordlist
+    wordlist=${wordlist:-/usr/share/wordlists/dirb/common.txt}
+    #ensures the ouput folder exists
+    mkdir -p "$OUTPUT_DIR" 
+
+    if [[ "$output_to_file" == "y" ]]; then
+        gobuster_output=$(gobuster dir -u "$url" -w "$wordlist" 2>&1 | tee "$output_file")
+    else
+        gobuster_output=$(gobuster dir -u "$url" -w "$wordlist" 2>&1)
+        echo "$gobuster_output" > "$output_file" 
+        echo -e "${NC}"
+        echo "$gobuster_output"
+    fi
+    # parser integration 
+    if [[ -f "$output_file" ]]; then
+                echo -e "${CYAN}Gobuster output saved to $output_file${NC}"
+    else
+        echo -e "${RED}Error: Expected Gobuster output file '$output_file' not found.${NC}"
+    fi
+
+    # AI insights 
+    generate_ai_insights "$gobuster_output" "$output_to_file" "$output_file" "gobuster"
+    echo "$gobuster_output"
+    echo -e "${GREEN}Gobuster scan completed.${NC}"
+}
 
 # Function to run Bandit
 run_bandit() {
@@ -55,7 +187,7 @@ run_bandit() {
         echo -e "${NC}"
         echo "$bandit_output"
     fi
-    generate_ai_insights "generate_ai_insights "$bandit_output"" "$output_to_file" "$output_file"
+    generate_ai_insights "generate_ai_insights" "$bandit_output" "$output_to_file" "$output_file"
     echo -e "${GREEN} Bandit operation completed.${NC}"
 }
 
@@ -111,12 +243,16 @@ run_nikto() {
     if [[ "$output_to_file" == "y" ]]; then
         read -p "Enter the output format (txt, html, xml): " format
         nikto_ai_output=$(nikto -h "$url" -o "$output_file" -Format "$format")
-    echo "$nikto_output" > "$output_file"
+    echo "$nikto_ai_output" > "$output_file"
     else
         nikto_ai_output=$(nikto -h "$url")
         nikto -h "$url"
     fi
+
     echo "$nikto_ai_output" 
+
+    echo "$nikto_ai_output"
+
     echo -e "${GREEN} Nikto Operation completed.${NC}"
 }
 
@@ -149,7 +285,7 @@ run_legion() {
     fi
 
     # Call the function to generate AI insights based on Legion output
-    generate_ai_insights "generate_ai_insights "$legion_output"" "$output_to_file" "$output_file" "$output_to_file" "$output_file"
+    generate_ai_insights "generate_ai_insights" "$legion_output" "$output_to_file" "$output_file" "$output_to_file" "$output_file"
     echo -e "${GREEN} Legion operation completed.${NC}"
 
 
@@ -172,7 +308,7 @@ run_owasp_zap() {
         zap_ai_output=$(zap -quickurl $url 2>&1)
         echo "$zap_ai_output"
     fi
-   auto_zap() {
+    auto_zap() {
     echo "Running OWASP ZAP..." >> $LOG_FILE
     zap_output_file="$HOME/zap_scan_output.txt"
     zap_ai_output=$(zap -quickurl "http://$ip:$port" -cmd)
@@ -180,8 +316,8 @@ run_owasp_zap() {
     echo "OWASP ZAP output saved to $zap_output_file" >> $LOG_FILE
     echo "OWASP ZAP scan completed." >> $LOG_FILE
 }
-    # Call the function to generate AI insights based on OWASP ZAP output
-    generate_ai_insights "generate_ai_insights "$zap_output"" "$output_to_file" "$output_file" "$output_to_file" "$output_file"
+    
+    echo "$zap_ai_output"
     echo -e "${GREEN} OWASP ZAP Operation completed.${NC}"
 }
 
@@ -659,6 +795,35 @@ run_scapy() {
     echo -e "${GREEN}Scapy operation completed.${NC}"
 }
 
+# Function to run Subfinder
+run_subfinder(){
+OUTPUT_DIR="output"
+mkdir -p "$OUTPUT_DIR"
+
+# Ask for domain input
+read -p "Enter the domain to scan (e.g., example.com): " domain
+
+# Create folder structure for saving results
+ts=$(date +%Y%m%d_%H%M%S)
+domain_dir="${OUTPUT_DIR}/subfinder/${domain}"
+mkdir -p "$domain_dir"
+
+out_txt="${domain_dir}/subfinder_${domain}_${ts}.txt"
+out_json="${domain_dir}/subfinder_${domain}_${ts}.json"
+
+echo "Running Subfinder on $domain..."
+subfinder -d "$domain" -silent -o "$out_txt" -json -oJ "$out_json"
+
+if [[ -s "$out_txt" ]]; then
+    echo "Subfinder completed successfully."
+    echo "Found $(wc -l < "$out_txt") subdomain(s)."
+    echo "TXT results saved at: $out_txt"
+    echo "JSON results saved at: $out_json"
+else
+    echo "No subdomains found or an error occurred."
+fi
+}
+
 # Function to run Wifiphisher
 run_wifiphisher() {
     OUTPUT_DIR=$1
@@ -764,4 +929,34 @@ run_ncrack() {
     generate_ai_insights "generate_ai_insights \"$ncrack_output\"" "y" "$output_file"
 
     echo -e "${GREEN}Ncrack scan completed. Results saved to $output_file.${NC}"
+}
+
+# Function: Dredd (Newly Added)
+run_dredd() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/dredd_output.txt"
+
+    echo -e "${CYAN}Running Dredd for API Security Testing...${NC}"
+
+    
+    read -p "Enter the path to your OpenAPI/Swagger file (e.g., ./api/swagger.yaml): " api_spec
+    read -p "Enter the server URL to test (e.g., http://localhost:8000): " server_url
+
+    if [[ ! -f "$api_spec" ]]; then
+        echo -e "${RED}Error: API spec file not found at $api_spec${NC}"
+        return 1
+    fi
+
+    mkdir -p "$OUTPUT_DIR"
+
+    if [[ "$output_to_file" == "y" ]]; then
+        dredd_output=$(dredd "$api_spec" "$server_url" | tee "$output_file")
+    else
+        dredd_output=$(dredd "$api_spec" "$server_url")
+        echo "$dredd_output"
+        echo "$dredd_output" > "$output_file"
+    fi
+
+    generate_ai_insights "$dredd_output" "$output_to_file" "$output_file" "dredd"
+    echo -e "${GREEN}Dredd API Security Testing completed.${NC}"
 }

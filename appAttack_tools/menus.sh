@@ -8,7 +8,7 @@ source "$SCRIPT_DIR/automate_vulnerability_scan.sh"
 source "$SCRIPT_DIR/auto_exploitation.sh"
 source "$SCRIPT_DIR/automate_post_exploitation.sh"
 source "$SCRIPT_DIR/automate_reporting.sh"
-
+source "$SCRIPT_DIR/run_tools.sh"
 
 
 
@@ -31,10 +31,12 @@ display_main_menu() {
     echo -e "${BYellow}╚════════════════════════════════╝${NC}"
     echo -e "${BCyan}1)${NC} ${White}Penetration Testing Tools${NC}"
     echo -e "${BCyan}2)${NC} ${White}Secure Code Review Tools${NC}"
-	echo -e "${BCyan}3)${NC} ${White}IoT Security Tools${NC}"
+    echo -e "${BCyan}3)${NC} ${White}IoT Security Tools${NC}"
     echo -e "${BCyan}4)${NC} ${White}Step by Step Guide${NC}"
     echo -e "${BCyan}5)${NC} ${White}Automated Processes${NC}"  
-    echo -e "${BCyan}6)${NC} ${White}Exit${NC}" 
+    echo -e "${BCyan}6)${NC} ${White}Container Security Tools${NC}"
+    echo -e "${BCyan}7)${NC} ${White}Cloud Security Tools${NC}"
+    echo -e "${BCyan}8)${NC} ${White}Exit${NC}" 
     echo -e "${BYellow}╚════════════════════════════════╝${NC}"
 }
 
@@ -50,6 +52,15 @@ display_main_menu() {
     
 #}
 
+#Function to display Conatainer Security Tools menu, qdd more tools here later (e.g., Grype, Dockle, Clair, etc.)
+display_container_security_tools_menu() {
+    echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
+    echo -e "${BYellow}║        Container Security Tools            ║${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BCyan}1)${NC} ${White}Trivy: Scan Docker/OCI images for vulnerabilities${NC}"
+    echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+}
 
 # Function to display Penetration Testing Tools menu
 display_penetration_testing_tools_menu() {
@@ -64,7 +75,9 @@ display_penetration_testing_tools_menu() {
     echo -e "${BCyan}6)${NC} ${BWhite}SQLmap${NC}: SQL Injection and database takeover tool"
     echo -e "${BCyan}7)${NC} ${BWhite}Metasploit Framework${NC}: Penetration testing framework"
     echo -e "${BCyan}8)${NC} ${BWhite}Wapiti${NC}: Web Application Vulnerability Scanner"
-    echo -e "${BCyan}9)${NC} ${BWhite}Automated Scan${NC}: Run an automated vulnerability scan"
+    echo -e "${BCyan}9)${NC} ${BWhite}Gobuster${NC}: Directory and DNS brute-forcing tool"
+	echo -e "${BCyan}10)${NC} ${BWhite}Subfinder${NC}: Subdomain enumeration"
+    echo -e "${BCyan}11)${NC} ${BWhite}Automated Scan${NC}: Run an automated vulnerability scan"
     echo -e "${BCyan}0)${NC} ${BWhite}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
@@ -79,8 +92,10 @@ display_secure_code_review_tools_menu() {
     echo -e "${BCyan}2)${NC} ${White}snyk cli: Test code locally or monitor for vulnerabilities${NC}"
     echo -e "${BCyan}3)${NC} ${White}brakeman: Scan a Ruby on Rails application for security vulnerabilities${NC}"
     echo -e "${BCyan}4)${NC} ${White}bandit: Security linter for Python code${NC}"
+        echo -e "${BCyan}5)${NC} ${White}Gitleaks: Secret scanning tool${NC}"
     echo -e "${BCyan}5)${NC} ${White}SonarQube: Continuous inspection of code quality and security${NC}"
-    echo -e "${BCyan}6)${NC} ${White}Go Back${NC}"
+	echo -e "${BCyan}6)${NC} ${White}Dredd: API Security Testing (OpenAPI/Swagger)${NC}"
+    echo -e "${BCyan}7)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
@@ -195,7 +210,9 @@ handle_penetration_testing_tools() {
             6) run_sqlmap "$OUTPUT_DIR" ;;
             7) run_metasploit "$OUTPUT_DIR" ;;
 	        8) run_wapiti "$OUTPUT_DIR" ;;
-            9) run_automated_scan ;;
+            9) run_gobuster "$OUTPUT_DIR" ;;
+			10) run_subfinder "$OUTPUT_DIR" ;;
+            11) run_automated_scan ;;
             0) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac
@@ -215,7 +232,9 @@ handle_secure_code_review_tools() {
             3) run_brakeman "$OUTPUT_DIR" ;;
             4) run_bandit "$OUTPUT_DIR" ;;
             5) run_sonarqube "$OUTPUT_DIR" ;;
-            6) break ;;
+            6) run_gitleaks_scan "$OUTPUT_DIR" ;;
+            7) run_dredd "$OUTPUT_DIR" ;;
+            8) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac
     done
@@ -287,6 +306,47 @@ handle_automated_processes_menu() {
             5) run_reporting_process ;; # Placeholder
             0) break ;; # Go back to main menu
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
+        esac
+    done
+}
+
+# Function for Container Security Tools
+handle_container_security_tools() {
+    local OUTPUT_DIR=$1
+    local choice
+    while true; do
+        display_container_security_tools_menu
+        read -p "Choose an option: " choice
+        case $choice in
+            1) run_trivy "$OUTPUT_DIR" ;;
+            0) break ;;
+            *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
+        esac
+    done
+}
+
+# Function for Cloud Security Tools
+display_cloud_security_menu() {
+    echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
+    echo -e "${BYellow}║           Cloud Security Tools             ║${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BCyan}1)${NC} ${White}ScoutSuite (Audit AWS/Azure/GCP)${NC}"
+    echo -e "${BCyan}2)${NC} ${White}Go Back${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+}
+
+handle_cloud_security_tools() {
+    while true; do
+        display_cloud_security_menu
+        read -p "Choose a cloud security tool: " cloud_choice
+        case $cloud_choice in
+            1)
+                read -p "Enter cloud provider (aws/azure/gcp): " provider
+                read -p "Enter profile (leave blank for default): " profile
+                run_scoutsuite_scan "$provider" "$profile"
+                ;;
+            2) break ;;
+            *) echo "Invalid choice, try again." ;;
         esac
     done
 }
@@ -404,7 +464,7 @@ handle_step_by_step_guide_IoT(){
             2) handle_step_by_step_IoT_bettercap;;
             3) handle_step_by_step_IoT_scapy;;
             4) handle_step_by_step_IoT_wifiphisher;;
-			5) handle_step_by_step_IoT_reaver;;
+        	5) handle_step_by_step_IoT_reaver;;
             6) break;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
             
