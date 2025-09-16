@@ -62,6 +62,7 @@ run_gitleaks_scan() {
     
     echo -e "${NC}"
     read -p "Enter IP address or network range to scan (e.g., 192.168.1.0/24): " target
+    mkdir -p "$OUTPUT_DIR" 
 
     if [[ "$output_to_file" == "y" ]]; then
         if [[ "$isIoTUsage" == "true" ]]; then
@@ -75,6 +76,19 @@ run_gitleaks_scan() {
         else
             nmap_ai_output=$(nmap -v "$target")
         fi
+
+	echo "$nmap_output"
+        echo "$nmap_output" > "$output_file"
+    fi
+    if [[ -f "$output_file" ]]; then 
+    	python3 parsers/nmap_parser.py  "$output_file"
+    else
+    	echo -e "${RED}Error: Expected scan output file '$output_file' not found.${NC}"
+    fi
+    generate_ai_insights "$nmap_output" "$output_to_file" "$output_file" "nmap"
+    
+    echo -e "${GREEN}Nmap scan completed.${NC}" 
+
         echo "$nmap_ai_output" > "$output_file" # Save results to file so nmap_parser.py can read it
     fi
     
@@ -86,7 +100,9 @@ run_gitleaks_scan() {
     fi
     echo "$nmap_ai_output"
     echo -e "${GREEN}Nmap scan completed.${NC}"
+
 }
+     
 
 # Function to run Trivy
 run_trivy() {
@@ -232,7 +248,11 @@ run_nikto() {
         nikto_ai_output=$(nikto -h "$url")
         nikto -h "$url"
     fi
+
+    echo "$nikto_ai_output" 
+
     echo "$nikto_ai_output"
+
     echo -e "${GREEN} Nikto Operation completed.${NC}"
 }
 
