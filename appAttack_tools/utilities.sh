@@ -1,21 +1,9 @@
 #!/bin/bash
 # This file contains utility functions used throughout the AppAttack automation toolkit
 
-# Load .env from fixed path
-ENV_PATH="/opt/appAttack_toolkit/.env"
-if [ -f "$ENV_PATH" ]; then
-    chmod 600 "$ENV_PATH"
-    set -a
-    source "$ENV_PATH"
-    set +a
-else
-    echo "Error: .env file not found at $ENV_PATH"
-    exit 1
-fi
-
 # Check if GEMINI_API_KEY is set
 if [ -z "$GEMINI_API_KEY" ]; then
-    echo "Error: GEMINI_API_KEY is not set. Please check your .env file."
+    echo "Error: GEMINI_API_KEY environment variable is not set. Please set it before running the script." >&2
     exit 1
 fi
 

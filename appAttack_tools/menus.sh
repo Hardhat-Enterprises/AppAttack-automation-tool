@@ -8,6 +8,11 @@ source "$SCRIPT_DIR/automate_vulnerability_scan.sh"
 source "$SCRIPT_DIR/auto_exploitation.sh"
 source "$SCRIPT_DIR/automate_post_exploitation.sh"
 source "$SCRIPT_DIR/automate_reporting.sh"
+source "$SCRIPT_DIR/automate_footprinting.sh"
+source "$SCRIPT_DIR/create_delta_report.sh"
+source "$SCRIPT_DIR/create_trend_analysis_report.sh"
+source "$SCRIPT_DIR/start_android_emulator.sh"
+source "$SCRIPT_DIR/automate_mobile_scan.sh"
 source "$SCRIPT_DIR/run_tools.sh"
 
 
@@ -36,8 +41,19 @@ display_main_menu() {
     echo -e "${BCyan}5)${NC} ${White}Automated Processes${NC}"  
     echo -e "${BCyan}6)${NC} ${White}Container Security Tools${NC}"
     echo -e "${BCyan}7)${NC} ${White}Cloud Security Tools${NC}"
-    echo -e "${BCyan}8)${NC} ${White}Exit${NC}" 
+    echo -e "${BCyan}8)${NC} ${White}Mobile Security Tools${NC}"
+    echo -e "${BCyan}9)${NC} ${White}Exit${NC}" 
     echo -e "${BYellow}╚════════════════════════════════╝${NC}"
+}
+
+display_mobile_security_tools_menu() {
+    echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
+    echo -e "${BYellow}║        Mobile Security Tools             ║${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BCyan}1)${NC} ${White}MobSF: Mobile Security Framework${NC}"
+    echo -e "${BCyan}2)${NC} ${White}Start Android Emulator with mitmproxy${NC}"
+    echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
 
@@ -142,6 +158,10 @@ display_automated_processes_menu() {
     echo -e "${BCyan}3)${NC} ${White}Exploitation${NC}"
     echo -e "${BCyan}4)${NC} ${White}Post-Exploitation${NC}"
     echo -e "${BCyan}5)${NC} ${White}Reporting${NC}"
+    echo -e "${BCyan}6)${NC} ${White}Web Application Footprinting${NC}"
+    echo -e "${BCyan}7)${NC} ${White}Delta Report Generation${NC}"
+    echo -e "${BCyan}8)${NC} ${White}Trend Analysis Report Generation${NC}"
+    echo -e "${BCyan}9)${NC} ${White}Automated Mobile Scan${NC}"
     echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
@@ -304,6 +324,10 @@ handle_automated_processes_menu() {
             3) run_exploitation_process ;; # Placeholder
             4) run_post_exploitation_process ;; # Placeholder
             5) run_reporting_process ;; # Placeholder
+            6) run_footprinting_workflow ;;
+            7) create_delta_report ;;
+            8) create_trend_analysis_report ;;
+            9) run_automated_mobile_scan ;;
             0) break ;; # Go back to main menu
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac
@@ -346,6 +370,20 @@ handle_cloud_security_tools() {
                 run_scoutsuite_scan "$provider" "$profile"
                 ;;
             2) break ;;
+            *) echo "Invalid choice, try again." ;;
+        esac
+    done
+}
+
+handle_mobile_security_tools() {
+    local choice
+    while true; do
+        display_mobile_security_tools_menu
+        read -p "Choose a mobile security tool: " choice
+        case $choice in
+            1) run_mobsf ;;
+            2) start_android_emulator ;;
+            0) break ;;
             *) echo "Invalid choice, try again." ;;
         esac
     done

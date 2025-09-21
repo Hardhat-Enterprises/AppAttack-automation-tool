@@ -616,6 +616,51 @@ install_subfinder() {
     fi
 }
 
+install_httpx() {
+    # Check if httpx is already installed
+    if command -v httpx &> /dev/null; then
+        echo -e "${GREEN}httpx is already installed.${NC}"
+        return
+    fi
+
+    echo -e "${CYAN}Installing httpx...${NC}"
+
+    # Install via apt (preferred for Debian/Kali/Ubuntu)
+    sudo apt update && sudo apt install -y httpx
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}httpx installed successfully via apt!${NC}"
+    else
+        # Fallback: Install via Go if apt fails
+        echo -e "${YELLOW}apt install failed. Using Go fallback...${NC}"
+
+        # Install Go if not available
+        if ! command -v go &> /dev/null; then
+            echo -e "${CYAN}Installing Go...${NC}"
+            sudo apt install -y golang
+        fi
+
+        # Install httpx using Go
+        GO111MODULE=on go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+        if [ $? -eq 0 ]; then
+            # Update PATH to include Go binaries
+            echo 'export PATH=$PATH:'"$(go env GOPATH)"/bin >> ~/.bashrc
+            source ~/.bashrc
+            echo -e "${GREEN}httpx installed successfully via Go!${NC}"
+        else
+            echo -e "${RED}Failed to install httpx.${NC}"
+            return 1
+        fi
+    fi
+
+    # Verify installation
+    if command -v httpx &> /dev/null; then
+        echo -e "${GREEN}httpx ready: $(httpx -version)${NC}"
+    else
+        echo -e "${RED}httpx installation failed.${NC}"
+        return 1
+    fi
+}
+
 install_wifiphisher() {
     # Colors for output
     CYAN='\033[0;36m'
@@ -776,6 +821,62 @@ install_scoutsuite() {
     echo "Installing ScoutSuite..."
     pip3 install scoutsuite
     echo "ScoutSuite installed successfully."
+}
+
+install_mobsf() {
+    if [ -d "/opt/Mobile-Security-Framework-MobSF" ]; then
+        echo -e "${GREEN}MobSF is already installed.${NC}"
+        return
+    fi
+
+    echo -e "${CYAN}Installing MobSF...${NC}"
+    sudo apt update
+    sudo apt install -y git python3-venv python3-pip
+    git clone https://github.com/MobSF/Mobile-Security-Framework-MobSF.git /opt/Mobile-Security-Framework-MobSF
+    cd /opt/Mobile-Security-Framework-MobSF
+    ./setup.sh
+    echo -e "${GREEN}MobSF installed successfully!${NC}"
+}
+
+install_android_sdk() {
+    if [ -d "/opt/android-sdk" ]; then
+        echo -e "${GREEN}Android SDK is already installed.${NC}"
+        return
+    fi
+
+    echo -e "${CYAN}Installing Android SDK...${NC}"
+    sudo apt update
+    sudo apt install -y wget unzip
+    mkdir -p /opt/android-sdk
+    cd /opt/android-sdk
+    wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip
+    unzip commandlinetools-linux-6858069_latest.zip
+    rm commandlinetools-linux-6858069_latest.zip
+    yes | tools/bin/sdkmanager --licenses
+    tools/bin/sdkmanager "platform-tools" "platforms;android-29" "system-images;android-29;google_apis;x86_64"
+    echo 'export ANDROID_HOME=/opt/android-sdk' >> ~/.bashrc
+    echo 'export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools' >> ~/.bashrc
+    source ~/.bashrc
+    echo -e "${GREEN}Android SDK installed successfully!${NC}"
+}
+
+create_avd() {
+    echo -e "${CYAN}Creating Android Virtual Device...${NC}"
+    echo "no" | /opt/android-sdk/tools/bin/avdmanager create avd -n test_avd -k "system-images;android-29;google_apis;x86_64"
+    echo -e "${GREEN}Android Virtual Device created successfully!${NC}"
+}
+
+install_mitmproxy() {
+    if command -v mitmproxy &> /dev/null; then
+        echo -e "${GREEN}mitmproxy is already installed.${NC}"
+        return
+    fi
+
+    echo -e "${CYAN}Installing mitmproxy...${NC}"
+    sudo apt update
+    sudo apt install -y python3-pip
+    pip3 install mitmproxy
+    echo -e "${GREEN}mitmproxy installed successfully!${NC}"
 }
 
 case $1 in 
