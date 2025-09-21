@@ -142,8 +142,9 @@ display_automated_processes_menu() {
     echo -e "${BCyan}3)${NC} ${White}Exploitation${NC}"
     echo -e "${BCyan}4)${NC} ${White}Post-Exploitation${NC}"
     echo -e "${BCyan}5)${NC} ${White}Reporting${NC}"
+    echo -e "${BCyan}6)${NC} ${White}API Reconnaissance${NC}"
     echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
-    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}
 }
 
 # Function to display the step by step guide of the penetration testing tools.
@@ -304,6 +305,8 @@ handle_automated_processes_menu() {
             3) run_exploitation_process ;; # Placeholder
             4) run_post_exploitation_process ;; # Placeholder
             5) run_reporting_process ;; # Placeholder
+            6) run_api_recon_process ;; # Placeholder
+            7) "$SCRIPT_DIR/workflow_builder.sh" ;;
             0) break ;; # Go back to main menu
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac

@@ -92,5 +92,32 @@ Streamline testing and installation when adding or updating features:
 - **Wireshark**: Network packet capture and analysis.
 
 
+## Workflows
+- **API Reconnaissance**: Chain Dredd → nmap → nikto for focused API scanning.
+
+## Dynamic Workflow Builder
+
+The Dynamic Workflow Builder allows you to create custom workflows by chaining together the available tools. You can pass the output of one tool as input to the next, allowing for powerful and flexible automation.
+
+### Usage
+
+1.  Select "Dynamic Workflow Builder" from the "Automated Processes" menu.
+2.  Select "Create a new workflow".
+3.  Select the tools you want to add to the workflow in the desired order.
+4.  For each tool, enter the required arguments. To use the output of a previous tool as an argument, use the following placeholder syntax:
+
+    `{{tool_name.output.field_name}}`
+
+    For example, to use the IP address and port from the output of an `nmap` scan in a `nikto` scan, you would enter the following arguments for `nikto`:
+
+    `-h {{nmap.output.parsed_data.host}} -p {{nmap.output.parsed_data.open_ports[0].port}}`
+
+5.  Once you have added all the tools to your workflow, you can choose to execute it immediately or save it for later use.
+
+### Limitations
+
+*   The output-to-input mapping currently only works with tools that produce a JSON output.
+*   The placeholder syntax is limited to simple field access. More complex queries are not yet supported.
+
 
 *For further assistance or to contribute, please open an issue or pull request.*
