@@ -5,21 +5,29 @@
 TOOL_NAME="Nmap"
 
 run_plugin() {
-    echo "[Nmap Plugin] Enter target IP address:"
-    read ip
-    echo "[Nmap Plugin] Enter target port (or leave blank for all ports):"
-    read port
-    output_file="$HOME/nmap_plugin_scan.txt"
+    if [ -z "$1" ]; then
+        echo "[Nmap Plugin] Usage: ./nmap_plugin.sh <ip> [port]"
+        return 1
+    fi
+
+    ip=$1
+    port=$2
+
     if [[ -z "$port" ]]; then
         nmap_output=$(nmap "$ip")
     else
         nmap_output=$(nmap -p "$port" "$ip")
     fi
-    echo "$nmap_output" > "$output_file"
-    echo "Nmap scan completed. Output saved to $output_file"
-    # python3 ../parsers/nmap_parser.py "$output_file"
+
+    # Call the parser and print the JSON output
+    python3 "$SCRIPT_DIR/../parsers/nmap_parser.py" "<(echo "$nmap_output")"
 }
 
 plugin_help() {
-    echo "Runs an Nmap scan on a target IP and port, saves results, and optionally parses output."
+    echo "Runs an Nmap scan on a target IP and port, and outputs the results in JSON format."
 }
+
+# If the script is called directly, run the plugin
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    run_plugin "$@"
+fi
