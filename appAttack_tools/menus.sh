@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/automate_recon.sh"
 source "$SCRIPT_DIR/automate_reconnaissance.sh"
@@ -15,8 +14,6 @@ source "$SCRIPT_DIR/start_android_emulator.sh"
 source "$SCRIPT_DIR/automate_mobile_scan.sh"
 source "$SCRIPT_DIR/run_tools.sh"
 
-
-
 # Display the Banner
 echo -e "${BYellow}                                                                           ${Color_Off}"
 echo -e "${BRed} █████╗ ██████╗ ██████╗     █████╗ ████████╗████████╗ █████╗  ██████╗██╗  ██╗${Color_Off}"
@@ -28,7 +25,6 @@ echo -e "${BBlue}╚═╝  ╚═╝╚═╝     ╚═╝        ╚═╝  �
 echo -e "${BYellow}                                                                           ${Color_Off}"
 echo -e "${BPurple}              A Professional Pen-Testing/Secure Code Review Toolkit        ${Color_Off}"
 #echo -e "${BCyan}Usage:${Color_Off} ./app-attack.sh [options]"
-
 
 display_main_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════╗${NC}"
@@ -55,7 +51,6 @@ display_mobile_security_tools_menu() {
     echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
-
 
 # Function to display asterisks in order to make the display uncluttered.
 #display_asterisk(){
@@ -98,7 +93,6 @@ display_penetration_testing_tools_menu() {
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
-
 # Function to display Secure Code Review Tools menu
 display_secure_code_review_tools_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
@@ -108,10 +102,10 @@ display_secure_code_review_tools_menu() {
     echo -e "${BCyan}2)${NC} ${White}snyk cli: Test code locally or monitor for vulnerabilities${NC}"
     echo -e "${BCyan}3)${NC} ${White}brakeman: Scan a Ruby on Rails application for security vulnerabilities${NC}"
     echo -e "${BCyan}4)${NC} ${White}bandit: Security linter for Python code${NC}"
-        echo -e "${BCyan}5)${NC} ${White}Gitleaks: Secret scanning tool${NC}"
-    echo -e "${BCyan}5)${NC} ${White}SonarQube: Continuous inspection of code quality and security${NC}"
-	echo -e "${BCyan}6)${NC} ${White}Dredd: API Security Testing (OpenAPI/Swagger)${NC}"
-    echo -e "${BCyan}7)${NC} ${White}Go Back${NC}"
+    echo -e "${BCyan}5)${NC} ${White}Gitleaks: Secret scanning tool${NC}"
+    echo -e "${BCyan}6)${NC} ${White}SonarQube: Continuous inspection of code quality and security${NC}"
+	echo -e "${BCyan}7)${NC} ${White}Dredd: API Security Testing (OpenAPI/Swagger)${NC}"
+    echo -e "${BCyan}8)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
@@ -159,9 +153,11 @@ display_automated_processes_menu() {
     echo -e "${BCyan}4)${NC} ${White}Post-Exploitation${NC}"
     echo -e "${BCyan}5)${NC} ${White}Reporting${NC}"
     echo -e "${BCyan}6)${NC} ${White}Web Application Footprinting${NC}"
-    echo -e "${BCyan}7)${NC} ${White}Delta Report Generation${NC}"
-    echo -e "${BCyan}8)${NC} ${White}Trend Analysis Report Generation${NC}"
-    echo -e "${BCyan}9)${NC} ${White}Automated Mobile Scan${NC}"
+    echo -e "${BCyan}7)${NC} ${White}API Reconnaissance${NC}"
+    echo -e "${BCyan}8)${NC} ${White}Delta Report Generation${NC}"
+    echo -e "${BCyan}9)${NC} ${White}Trend Analysis Report Generation${NC}"
+    echo -e "${BCyan}10)${NC} ${White}Automated Mobile Scan${NC}"
+    echo -e "${BCyan}11)${NC} ${White}Workflow Builder${NC}"
     echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
@@ -210,7 +206,6 @@ display_step_by_step_guide_iot_security_tools(){
   #  display_asterisk
 }
 
-
 #Handle Options
 
 # Function for Penetration Testing Tools
@@ -251,8 +246,8 @@ handle_secure_code_review_tools() {
             2) run_snyk "$OUTPUT_DIR" ;;
             3) run_brakeman "$OUTPUT_DIR" ;;
             4) run_bandit "$OUTPUT_DIR" ;;
-            5) run_sonarqube "$OUTPUT_DIR" ;;
-            6) run_gitleaks_scan "$OUTPUT_DIR" ;;
+            5) run_gitleaks_scan "$OUTPUT_DIR" ;;
+            6) run_sonarqube "$OUTPUT_DIR" ;;
             7) run_dredd "$OUTPUT_DIR" ;;
             8) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
@@ -310,13 +305,12 @@ handle_step_by_step_guide(){
     done
     
 }
+
 # Function to handle Automated Processes menu
 handle_automated_processes_menu() {
     local choice
     while true; do
-     
-
-   display_automated_processes_menu
+        display_automated_processes_menu
         read -p "Choose an option: " choice
         case $choice in
             1) run_automated_reconnaissance_scan ;; # Placeholder for Reconnaissance
@@ -325,9 +319,11 @@ handle_automated_processes_menu() {
             4) run_post_exploitation_process ;; # Placeholder
             5) run_reporting_process ;; # Placeholder
             6) run_footprinting_workflow ;;
-            7) create_delta_report ;;
-            8) create_trend_analysis_report ;;
-            9) run_automated_mobile_scan ;;
+            7) run_api_recon_process ;; # Placeholder
+            8) create_delta_report ;;
+            9) create_trend_analysis_report ;;
+            10) run_automated_mobile_scan ;;
+            11) "$SCRIPT_DIR/workflow_builder.sh" ;;
             0) break ;; # Go back to main menu
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac
@@ -430,6 +426,17 @@ run_reporting_process() {
     echo "Final report generated at $report_file"
 }
 
+run_footprinting_workflow() {
+    echo "Running Web Application Footprinting..."
+    run_web_footprinting
+}
+
+run_api_recon_process() {
+    echo "Running API Reconnaissance Process..."
+    # Placeholder for API reconnaissance functionality
+    echo "API reconnaissance feature coming soon..."
+}
+
 handle_step_by_step_guide_SCR(){
     
     local choice
@@ -453,9 +460,6 @@ handle_step_by_step_guide_SCR(){
         esac
         
     done
-    
-    
-    
 }
 
 handle_step_by_step_guide_Pentest(){
@@ -510,3 +514,29 @@ handle_step_by_step_guide_IoT(){
         
     done
 }
+
+# Main program loop
+main() {
+    local OUTPUT_DIR="$SCRIPT_DIR/../output"
+    mkdir -p "$OUTPUT_DIR"
+    
+    while true; do
+        display_main_menu
+        read -p "Choose an option: " main_choice
+        case $main_choice in
+            1) handle_penetration_testing_tools "$OUTPUT_DIR" ;;
+            2) handle_secure_code_review_tools "$OUTPUT_DIR" ;;
+            3) handle_iot_security_tools "$OUTPUT_DIR" ;;
+            4) handle_step_by_step_guide ;;
+            5) handle_automated_processes_menu ;;
+            6) handle_container_security_tools "$OUTPUT_DIR" ;;
+            7) handle_cloud_security_tools ;;
+            8) handle_mobile_security_tools ;;
+            9) echo "Exiting..."; exit 0 ;;
+            *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
+        esac
+    done
+}
+
+# Run the main function
+main
