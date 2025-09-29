@@ -1,5 +1,9 @@
 #!/bin/bash
-source utilities.sh
+
+# === Script Directory Detection ===
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "$SCRIPT_DIR/utilities.sh"
 LOG_FILE="$HOME/automated_scan.log"
 
 >$LOG_FILE
@@ -8,7 +12,10 @@ LOG_FILE="$HOME/automated_scan.log"
 run_nmap() {
     OUTPUT_DIR=$1
     isIoTUsage=$2
-    output_file="${OUTPUT_DIR}/nmap_output.txt"
+    timestamp=$(date +%F_%H-%M-%S)
+    output_dir="${OUTPUT_DIR}/nmap_scan_${timestamp}"
+    mkdir -p "$output_dir"
+    output_file="${output_dir}/nmap_output.txt"
 run_scoutsuite_scan() {
     local cloud_provider="$1" # aws, azure, gcp
     local profile="$2"        # Optional: AWS profile, Azure creds, etc.
@@ -38,6 +45,12 @@ run_scoutsuite_scan() {
             ;;
     esac
     echo "ScoutSuite scan complete. Report saved to $report_file"
+}
+
+run_mobsf() {
+    echo -e "${CYAN}Starting MobSF...${NC}"
+    cd /opt/Mobile-Security-Framework-MobSF
+    ./run.sh
 }
 
 run_gitleaks_scan() {
