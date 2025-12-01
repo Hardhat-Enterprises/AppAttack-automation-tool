@@ -39,6 +39,7 @@ display_main_menu() {
     echo -e "${BCyan}7)${NC} ${White}Cloud Security Tools${NC}"
     echo -e "${BCyan}8)${NC} ${White}Mobile Security Tools${NC}"
     echo -e "${BCyan}9)${NC} ${White}Exit${NC}" 
+    echo -e "${BCyan}10)${NC} ${White}LLM Integration (Local/Global)${NC}"
     echo -e "${BYellow}╚════════════════════════════════╝${NC}"
 }
 

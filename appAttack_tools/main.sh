@@ -155,6 +155,10 @@ main() {
             9) echo -e "${YELLOW}Exiting...${NC}"
                 log_message "Script ended"
             exit 0 ;;
+            10)
+                # Run LLM integration script (Local/Global choice)
+                python3 "$SCRIPT_DIR/ai/llm_integration_test_1.py"
+                ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}"
             log_message "Invalid user input" ;;
         esac

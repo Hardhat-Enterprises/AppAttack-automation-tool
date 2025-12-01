@@ -1,0 +1,10 @@
+{
+  "mode": "hybrid",
+  "cloud_provider": "gemini",
+  "providers": {
+    "gemini": {"api_key_stored": false},
+    "openai": {"api_key_stored": false}
+  },
+  "local": {"ollama": {"host": "http://localhost:11434", "model": "ollama/gpt-4o"}},
+  "local_with_web_access": false
+}
