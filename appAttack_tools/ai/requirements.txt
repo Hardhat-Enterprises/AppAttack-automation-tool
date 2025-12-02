@@ -1,0 +1,5 @@
+requests
+pyyaml
+keyring
+pytest
+cryptography

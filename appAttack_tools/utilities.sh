@@ -222,21 +222,12 @@ generate_ai_insights() {
         esac
 
 
-        RESPONSE=$(curl -s -X POST  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$API_KEY" \
-        -H "Content-Type: application/json" \
-        -d '{
-            "contents": [
-              {
-                "parts": [
-                  {
-                    "text": "'"$PROMPT"'"
-                  }
-                ]
-              }
-            ]
-        }')
-        
-        INSIGHTS=$(echo $RESPONSE | jq -r '.candidates[0].content.parts[0].text')
+    # Use the Python AI CLI which routes to cloud/local according to config
+    SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+    AI_CLI="$SCRIPT_DIR/ai/cli.py"
+    # call the cli and extract text
+    RESPONSE=$(python3 "$AI_CLI" get --prompt "$PROMPT" --timeout 30)
+    INSIGHTS=$(echo "$RESPONSE" | jq -r '.text')
         
         if [[ "$output_to_file" == "y" ]]; then
             echo -e "\nAI-Generated Insights:\n$INSIGHTS" | sudo tee -a "$output_file" > /dev/null
