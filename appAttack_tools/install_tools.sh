@@ -879,6 +879,24 @@ install_mitmproxy() {
     echo -e "${GREEN}mitmproxy installed successfully!${NC}"
 }
 
+install_ollama(){
+    #check if ollama is installed
+    if command -v ollama &> /dev/null; then
+        echo "ollama is already installed at: $(command -v ollama)"
+    else
+    #if ollama isnt installed, we will install it
+
+    #first we ensure curl exists
+        if ! command -v curl &> /dev/null; then
+            sudo apt update
+            sudo apt install -y curl
+        fi
+    #then we try to install ollama using curl with the official download link
+        curl -fsSL https://ollama.com/install.sh | sudo sh
+    fi
+}
+
+
 case $1 in 
     gobuster)   install_gobuster ;;
     trivy)   install_trivy ;;
@@ -910,6 +928,7 @@ case $1 in
     wifiphisher)   install_wifiphisher ;;
     dredd)   install_dredd ;;
     subfinder)   install_subfinder ;;
+    ollama)   install_ollama ;;
     *)
     ;;
 esac

@@ -49,7 +49,9 @@ main() {
     install_sonarqube
     # Check and install wapiti
     install_wapiti
-    
+    #check and install ollama
+    install_ollama
+
     # Check for updates for the installed tools
     check_updates
 }
