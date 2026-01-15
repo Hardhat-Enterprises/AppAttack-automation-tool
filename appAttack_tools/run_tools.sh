@@ -98,12 +98,12 @@ run_gitleaks_scan() {
     else
     	echo -e "${RED}Error: Expected scan output file '$output_file' not found.${NC}"
     fi
-    generate_ai_insights "$nmap_output" "$output_to_file" "$output_file" "nmap"
+    #generate_ai_insights "$nmap_output" "$output_to_file" "$output_file" "nmap"
     
     echo -e "${GREEN}Nmap scan completed.${NC}" 
 
         echo "$nmap_ai_output" > "$output_file" # Save results to file so nmap_parser.py can read it
-    fi
+    
     
     # Run the parser if the Nmap output file exists
     if [[ -f "$output_file" ]]; then

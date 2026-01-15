@@ -1,10 +1,10 @@
 #!/bin/bash
 # This file contains utility functions used throughout the AppAttack automation toolkit
 
-# Check if GEMINI_API_KEY is set
+#Check if GEMINI_API_KEY is set
 if [ -z "$GEMINI_API_KEY" ]; then
-    echo "Error: GEMINI_API_KEY environment variable is not set. Please set it before running the script." >&2
-    exit 1
+    echo "GEMINI_API_KEY environment variable is not set. You will not be able to use cloud LLM functionality without fixing this." >&2
+    # exit 1
 fi
 
 # Define the log file path where the script logs messages
@@ -123,28 +123,42 @@ generate_ai_insights() {
     local output_file="$3"  # Output file directory
     local tool="$4"  # Name of the tool used
 
-    read -p "Do you want to get AI-generated insights on the scan? (y/n): " ai_insights
+    #ask if user wants ai insights with input validation
+    while true; do
+        read -r -p "Do you want to get AI-generated insights on the scan? (y/n): " ai_insights
+        case "$ai_insights" in
+            [Yy]) break ;;
+            [Nn]) 
+                echo "Skipping AI-generated insights."
+                return 0
+                ;;
+            *)
+                echo "Please answer 'y' or 'n'."
+                ;;
+        esac
+    done
 
-    if [[ "$ai_insights" == "y" ]]; then
+        #function will only continue if user says y/Y
+
         API_KEY="$GEMINI_API_KEY"
         tool_parser="parsers/${tool}_parser.py"
+
         if [[ -f "$tool_parser" ]]; then
             PYTHON_RESPONSE=$(python3 "$tool_parser" "$output_file")
             PROMPT=$(echo "$PYTHON_RESPONSE" | jq -r '.prompt')
         else
-        # Fallback to raw output if parser not found
+        #raw output if parser not found
             escaped_output=$(echo "$output" | sed 's/"/\\"/g')
             PROMPT="Analyze this output and provide insights: $escaped_output"
         fi
 
 
-        # Escape scan output
+        #scan output
         escaped_output=$(echo "$output" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
 
-        # Normalize tool name to lowercase
+        #tool name to lowercase
         tool=$(echo "$tool" | tr '[:upper:]' '[:lower:]')
 
-        # Define structured prompts based on the tool used
         case $tool in
             #Pen testing prompts
             "nmap")
@@ -222,23 +236,58 @@ generate_ai_insights() {
         esac
 
 
-    # Use the Python AI CLI which routes to cloud/local according to config
-    SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-    AI_CLI="$SCRIPT_DIR/ai/cli.py"
-    # call the cli and extract text
-    RESPONSE=$(python3 "$AI_CLI" get --prompt "$PROMPT" --timeout 30)
-    INSIGHTS=$(echo "$RESPONSE" | jq -r '.text')
-        
-        if [[ "$output_to_file" == "y" ]]; then
-            echo -e "\nAI-Generated Insights:\n$INSIGHTS" | sudo tee -a "$output_file" > /dev/null
-        else
+
+    # # Use the Python AI CLI which routes to cloud/local according to config
+    # SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+    # AI_CLI="$SCRIPT_DIR/ai/cli.py"
+    # # call the cli and extract text
+    # RESPONSE=$(python3 "$AI_CLI" get --prompt "$PROMPT" --timeout 30)
+    # INSIGHTS=$(echo "$RESPONSE" | jq -r '.text')
+
+    while true; do
+    echo "Choose LLM mode:"
+    echo "  1) local llm"
+    echo "  2) cloud-based"
+    read -r -p "Enter 1 or 2: " choice
+
+    case "$choice" in
+        1)
+        #local
+        python3 -u ./ollama_integration.py --prompt "$PROMPT"
+        break
+        ;;
+        2)
+        #cloud
+        INSIGHTS="$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+            "contents": [
+                {
+                "parts": [
+                    {
+                    "text": "'"$PROMPT"'"
+                    }
+                ]
+                }
+            ]
+            }')"
             echo -e "\n+-----------------------------+"
             echo -e "|          Insights           |"
             echo -e "+-----------------------------+"
             echo -e "$INSIGHTS"
             echo -e "+-----------------------------+"
-        fi
+        break
+        ;;
+        *)
+        echo "Invalid choice — please enter 1 or 2."
+        ;;
+    esac
+    done
+
+    if [[ "$output_to_file" == "y" ]]; then
+            echo -e "\nAI-Generated Insights:\n$INSIGHTS" | sudo tee -a "$output_file" > /dev/null
     fi
+
 }
 log_message() {
     local message="$1"
