@@ -1,0 +1,18 @@
+# Create a sample nmap documentation file
+cat > AI_context_docs/nmap_guide.md << 'EOF'
+# Nmap Guide
+
+Nmap is a network scanning tool used for security auditing.
+
+## Basic Usage
+- `nmap <target>` - Basic scan
+- `nmap -sV <target>` - Service version detection
+- `nmap -sS <target>` - Stealth SYN scan
+- `nmap -p 1-65535 <target>` - Scan all ports
+
+## Common Options
+- `-v` - Verbose output
+- `-A` - Aggressive scan (OS detection, version detection, script scanning)
+- `-T4` - Faster timing template
+- `--top-ports 100` - Scan the 100 most common ports
+EOF
