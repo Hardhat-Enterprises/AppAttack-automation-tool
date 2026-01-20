@@ -143,6 +143,32 @@ generate_ai_insights() {
         API_KEY="$GEMINI_API_KEY"
         tool_parser="parsers/${tool}_parser.py"
 
+        # ============================================================
+        # NEW: AI CONTEXT INTEGRATION
+        # ============================================================
+        echo -e "${CYAN} Retrieving documentation context for $tool...${NC}"
+        
+        # Get the script directory to locate ai_context_system.py
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        AI_CONTEXT_SCRIPT="$SCRIPT_DIR/ai_context_system.py"
+        
+        # Check if AI Context system exists
+        if [[ -f "$AI_CONTEXT_SCRIPT" ]]; then
+            # Query the AI Context system for tool documentation
+            AI_CONTEXT=$(python3 "$AI_CONTEXT_SCRIPT" --query "How to use $tool and interpret its results? What are common security issues to look for?" 2>/dev/null)
+            
+            if [[ -n "$AI_CONTEXT" && "$AI_CONTEXT" != *"No documentation available"* ]]; then
+                echo -e "${GREEN}✓ Documentation context retrieved${NC}"
+            else
+                echo -e "${YELLOW}⚠ No specific documentation found for $tool, using general analysis${NC}"
+                AI_CONTEXT=""
+            fi
+        else
+            echo -e "${YELLOW}⚠ AI Context system not found at $AI_CONTEXT_SCRIPT${NC}"
+            AI_CONTEXT=""
+        fi
+        # ============================================================
+
         if [[ -f "$tool_parser" ]]; then
             PYTHON_RESPONSE=$(python3 "$tool_parser" "$output_file")
             PROMPT=$(echo "$PYTHON_RESPONSE" | jq -r '.prompt')
@@ -162,87 +188,91 @@ generate_ai_insights() {
         case $tool in
             #Pen testing prompts
             "nmap")
-                PROMPT="Analyze the Nmap scan results below. Identify open ports, services, and potential security vulnerabilities. Provide mitigation strategies for each risk.\n$escaped_output"
+                BASE_PROMPT="Analyze the Nmap scan results below. Identify open ports, services, and potential security vulnerabilities. Provide mitigation strategies for each risk.\n$escaped_output"
                 ;;
             "nikto")
-                PROMPT="Analyze the Nikto scan output and summarize the identified security vulnerabilities. Suggest remediation steps based on best security practices for web servers.\n$escaped_output"
+                BASE_PROMPT="Analyze the Nikto scan output and summarize the identified security vulnerabilities. Suggest remediation steps based on best security practices for web servers.\n$escaped_output"
                 ;;
             "zap")
-                PROMPT="Review the OWASP ZAP scan results. Highlight major security vulnerabilities (such as XSS, SQL Injection, CSRF) and provide actionable steps to mitigate them.\n$escaped_output"
+                BASE_PROMPT="Review the OWASP ZAP scan results. Highlight major security vulnerabilities (such as XSS, SQL Injection, CSRF) and provide actionable steps to mitigate them.\n$escaped_output"
                 ;;
             "john")
-                PROMPT="Analyze the password hashes and cracking results from John the Ripper. Identify weak passwords and suggest best practices for improving password security.\n$escaped_output"
+                BASE_PROMPT="Analyze the password hashes and cracking results from John the Ripper. Identify weak passwords and suggest best practices for improving password security.\n$escaped_output"
                 ;;
             "sqlmap")
-                PROMPT="Analyze the SQLMap scan results. Identify SQL injection risks and suggest parameterized queries or WAF configurations to prevent exploitation.\n$escaped_output"
+                BASE_PROMPT="Analyze the SQLMap scan results. Identify SQL injection risks and suggest parameterized queries or WAF configurations to prevent exploitation.\n$escaped_output"
                 ;;
             "metasploit")
-                PROMPT="Review the Metasploit session logs. Identify exploited vulnerabilities and suggest hardening measures to prevent similar attacks.\n$escaped_output"
+                BASE_PROMPT="Review the Metasploit session logs. Identify exploited vulnerabilities and suggest hardening measures to prevent similar attacks.\n$escaped_output"
                 ;;
             "wapiti")
-                PROMPT="Analyze the Wapiti scan output. Identify critical vulnerabilities and recommend security best practices to mitigate risks in web applications.\n$escaped_output"
+                BASE_PROMPT="Analyze the Wapiti scan output. Identify critical vulnerabilities and recommend security best practices to mitigate risks in web applications.\n$escaped_output"
                 ;;
             #IoT prompts
             "aircrack-ng")
-                PROMPT="This is the output from Aircrack-ng, a tool used to analyze and crack wireless network encryption (WEP/WPA/WPA2). Identify any discovered weak keys, cracked passwords, or insecure wireless configurations. Recommend how to secure the affected wireless network:\n$escaped_output"
+                BASE_PROMPT="This is the output from Aircrack-ng, a tool used to analyze and crack wireless network encryption (WEP/WPA/WPA2). Identify any discovered weak keys, cracked passwords, or insecure wireless configurations. Recommend how to secure the affected wireless network:\n$escaped_output"
                 ;;
             "binwalk")
-                PROMPT="This is the output from Binwalk, used for firmware analysis and reverse engineering. Review the extracted segments and embedded files. Point out any indicators of outdated libraries, hardcoded credentials, or known vulnerabilities in firmware components:\n$escaped_output"
+                BASE_PROMPT="This is the output from Binwalk, used for firmware analysis and reverse engineering. Review the extracted segments and embedded files. Point out any indicators of outdated libraries, hardcoded credentials, or known vulnerabilities in firmware components:\n$escaped_output"
                 ;;
             "wireshark")
-                PROMPT="Below is packet capture output from Wireshark, often used to analyze IoT device traffic. Identify any sensitive data transmitted in cleartext, insecure protocols (like Telnet/HTTP), or device fingerprinting attempts. Recommend security improvements for IoT communication:\n$escaped_output"
+                BASE_PROMPT="Below is packet capture output from Wireshark, often used to analyze IoT device traffic. Identify any sensitive data transmitted in cleartext, insecure protocols (like Telnet/HTTP), or device fingerprinting attempts. Recommend security improvements for IoT communication:\n$escaped_output"
                 ;;
             "hashcat")
-                PROMPT="This is output from Hashcat, a high-performance password cracker. Analyze cracked hashes and provide insights into weak password patterns, reuse, or policy violations. Suggest stronger password practices:\n$escaped_output"
+                BASE_PROMPT="This is output from Hashcat, a high-performance password cracker. Analyze cracked hashes and provide insights into weak password patterns, reuse, or policy violations. Suggest stronger password practices:\n$escaped_output"
                 ;;
             "miranda")
-                PROMPT="This is output from Miranda, a tool for fuzzing USB and HID devices. Review the log for signs of firmware misbehavior, unhandled input, or potential attack vectors via USB fuzzing:\n$escaped_output"
+                BASE_PROMPT="This is output from Miranda, a tool for fuzzing USB and HID devices. Review the log for signs of firmware misbehavior, unhandled input, or potential attack vectors via USB fuzzing:\n$escaped_output"
                 ;;
             "ncrack")
-                PROMPT="This scan result is from Ncrack, used for brute-forcing network authentication. Identify services with weak or exposed credentials and provide recommendations to harden authentication mechanisms:\n$escaped_output"
+                BASE_PROMPT="This scan result is from Ncrack, used for brute-forcing network authentication. Identify services with weak or exposed credentials and provide recommendations to harden authentication mechanisms:\n$escaped_output"
                 ;;
             "umap")
-                PROMPT="This is output from Umap, a network visualization tool. Analyze the topology and device relationships to identify exposed services, insecure device placement, or unusual traffic paths:\n$escaped_output"
+                BASE_PROMPT="This is output from Umap, a network visualization tool. Analyze the topology and device relationships to identify exposed services, insecure device placement, or unusual traffic paths:\n$escaped_output"
                 ;;
             "wifiphisher")
-                PROMPT="This scan is from Wifiphisher, a tool used to simulate Wi-Fi phishing attacks. Review the captured interactions and identify potential user deception strategies or social engineering weaknesses:\n$escaped_output"
+                BASE_PROMPT="This scan is from Wifiphisher, a tool used to simulate Wi-Fi phishing attacks. Review the captured interactions and identify potential user deception strategies or social engineering weaknesses:\n$escaped_output"
                 ;;
              #Secure Code Review Tools   
             "osv-scanner")
-                PROMPT="Act as a cybersecurity expert and Analyze the results from OSV-Scanner. List all identified open-source software vulnerabilities along with CVEs in the order of criticality with score. Suggest remediation steps or dependency upgrades for each identified vulnerabilities:\n$escaped_output"
+                BASE_PROMPT="Act as a cybersecurity expert and Analyze the results from OSV-Scanner. List all identified open-source software vulnerabilities along with CVEs in the order of criticality with score. Suggest remediation steps or dependency upgrades for each identified vulnerabilities:\n$escaped_output"
                 ;;
 
             "snyk")
-                PROMPT="This is output from the Snyk CLI. Summarize the security issues found in the code or dependencies. Highlight the severity, affected packages, and offer remediation strategies such as patches, upgrades, or coding changes:\n$escaped_output"
+                BASE_PROMPT="This is output from the Snyk CLI. Summarize the security issues found in the code or dependencies. Highlight the severity, affected packages, and offer remediation strategies such as patches, upgrades, or coding changes:\n$escaped_output"
                 ;;
 
             "brakeman")
-                PROMPT="Act as a cybersecurity expert and analyze this scan report from Brakeman, a security tool for Ruby on Rails applications. Identify major vulnerabilities such as SQL injection, command injection, or mass assignment issues. Suggest how to mitigate them following secure Rails practices under each identified issue:\n$escaped_output"
-                #Act as a cybersecurity expert and analyze this scan report from Brakeman, a security tool for Ruby on Rails applications. Identify major vulnerabilities such as SQL injection, command injection, or mass assignment issues. Suggest how to mitigate them following secure Rails practices under each identified issue
+                BASE_PROMPT="Act as a cybersecurity expert and analyze this scan report from Brakeman, a security tool for Ruby on Rails applications. Identify major vulnerabilities such as SQL injection, command injection, or mass assignment issues. Suggest how to mitigate them following secure Rails practices under each identified issue:\n$escaped_output"
                 ;;
 
             "bandit")
-                PROMPT="Act as a cybersecurity expert analyze the  Python security linter output from Bandit. Describe the detected code issues and their severity and  recommend secure coding alternatives for dangerous function calls or insecure patterns under each identified issue:\n$escaped_output"
-                #Act as a cybersecurity expert analyze the  Python security linter output from Bandit. Describe the detected code issues and their severity and  recommend secure coding alternatives for dangerous function calls or insecure patterns under each identified issue
+                BASE_PROMPT="Act as a cybersecurity expert analyze the  Python security linter output from Bandit. Describe the detected code issues and their severity and  recommend secure coding alternatives for dangerous function calls or insecure patterns under each identified issue:\n$escaped_output"
                 ;;
 
             "sonarqube")
-                PROMPT="This is a code quality and security scan output from SonarQube. Identify major security hotspots or code smells. Explain the impact of critical issues and suggest secure coding improvements:\n$escaped_output"
+                BASE_PROMPT="This is a code quality and security scan output from SonarQube. Identify major security hotspots or code smells. Explain the impact of critical issues and suggest secure coding improvements:\n$escaped_output"
                 ;;    
                       
             *)
-                PROMPT="Analyze the security scan results and provide insights.\n$escaped_output"
+                BASE_PROMPT="Analyze the security scan results and provide insights.\n$escaped_output"
                 ;;
         esac
 
+        # ============================================================
+        # NEW: COMBINE AI CONTEXT WITH BASE PROMPT
+        # ============================================================
+        if [[ -n "$AI_CONTEXT" ]]; then
+            PROMPT="$AI_CONTEXT
 
+---
 
-    # # Use the Python AI CLI which routes to cloud/local according to config
-    # SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-    # AI_CLI="$SCRIPT_DIR/ai/cli.py"
-    # # call the cli and extract text
-    # RESPONSE=$(python3 "$AI_CLI" get --prompt "$PROMPT" --timeout 30)
-    # INSIGHTS=$(echo "$RESPONSE" | jq -r '.text')
+Now, using the documentation context above, $BASE_PROMPT"
+        else
+            PROMPT="$BASE_PROMPT"
+        fi
+        # ============================================================
+
 
     while true; do
     echo "Choose LLM mode:"
@@ -289,6 +319,7 @@ generate_ai_insights() {
     fi
 
 }
+
 log_message() {
     local message="$1"
     # Appends a timestamp and the message to the central log file
