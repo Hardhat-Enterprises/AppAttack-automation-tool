@@ -2,9 +2,12 @@
 # This file contains utility functions used throughout the AppAttack automation toolkit
 
 #Check if GEMINI_API_KEY is set
-if [ -z "$GEMINI_API_KEY" ]; then
-    echo "GEMINI_API_KEY environment variable is not set. You will not be able to use cloud LLM functionality without fixing this." >&2
-    # exit 1
+if [[ -z "$GEMINI_API_KEY" ]]; then
+    #this stops it reprinting the error message everytime utilities.sh is used
+    if [[ "$already_told" != "true" ]]; then
+        echo "GEMINI_API_KEY environment variable is not set. You will not be able to use cloud LLM functionality without fixing this." >&2
+        already_told=true
+    fi
 fi
 
 # Define the log file path where the script logs messages
@@ -123,7 +126,7 @@ generate_ai_insights() {
     local output_file="$3"  # Output file directory
     local tool="$4"  # Name of the tool used
 
-    #ask if user wants ai insights with input validation
+    
     while true; do
         read -r -p "Do you want to get AI-generated insights on the scan? (y/n): " ai_insights
         case "$ai_insights" in
@@ -138,27 +141,26 @@ generate_ai_insights() {
         esac
     done
 
-        #function will only continue if user says y/Y
-
+    
         API_KEY="$GEMINI_API_KEY"
         tool_parser="parsers/${tool}_parser.py"
-
         if [[ -f "$tool_parser" ]]; then
             PYTHON_RESPONSE=$(python3 "$tool_parser" "$output_file")
             PROMPT=$(echo "$PYTHON_RESPONSE" | jq -r '.prompt')
         else
-        #raw output if parser not found
+        # Fallback to raw output if parser not found
             escaped_output=$(echo "$output" | sed 's/"/\\"/g')
             PROMPT="Analyze this output and provide insights: $escaped_output"
         fi
 
 
-        #scan output
+        # Escape scan output
         escaped_output=$(echo "$output" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
 
-        #tool name to lowercase
+        # Normalize tool name to lowercase
         tool=$(echo "$tool" | tr '[:upper:]' '[:lower:]')
 
+        # Define structured prompts based on the tool used
         case $tool in
             #Pen testing prompts
             "nmap")
@@ -243,21 +245,23 @@ generate_ai_insights() {
     # # call the cli and extract text
     # RESPONSE=$(python3 "$AI_CLI" get --prompt "$PROMPT" --timeout 30)
     # INSIGHTS=$(echo "$RESPONSE" | jq -r '.text')
-
-    while true; do
-    echo "Choose LLM mode:"
-    echo "  1) local llm"
-    echo "  2) cloud-based"
-    read -r -p "Enter 1 or 2: " choice
-
-    case "$choice" in
+    
+    #display the menu if and only if the user has a key to use the gemini api
+    if [ -n "$GEMINI_API_KEY" ]; then
+        while true; do
+        echo "Choose LLM mode:"
+        echo "  1) local llm"
+        echo "  2) cloud-based llm"
+        read -r -p "Enter 1 or 2: " choice
+        case "$choice" in
         1)
-        #local
+        # Run local model and capture output in INSIGHTS
+        # If you want interactive streaming, remove the capture and call python directly.
         python3 -u ./ollama_integration.py --prompt "$PROMPT"
         break
         ;;
         2)
-        #cloud
+        # Call cloud API and capture output in INSIGHTS
         INSIGHTS="$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$API_KEY" \
             -H "Content-Type: application/json" \
             -d '{
@@ -283,6 +287,11 @@ generate_ai_insights() {
         ;;
     esac
     done
+        else
+    python3 -u ./ollama_integration.py --prompt "$PROMPT"
+    fi    
+
+
 
     if [[ "$output_to_file" == "y" ]]; then
             echo -e "\nAI-Generated Insights:\n$INSIGHTS" | sudo tee -a "$output_file" > /dev/null
