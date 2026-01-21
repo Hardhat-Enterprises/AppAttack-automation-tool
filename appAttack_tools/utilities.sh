@@ -255,13 +255,12 @@ generate_ai_insights() {
         read -r -p "Enter 1 or 2: " choice
         case "$choice" in
         1)
-        # Run local model and capture output in INSIGHTS
-        # If you want interactive streaming, remove the capture and call python directly.
+        #local
         python3 -u ./ollama_integration.py --prompt "$PROMPT"
         break
         ;;
         2)
-        # Call cloud API and capture output in INSIGHTS
+        #cloud
         INSIGHTS="$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$API_KEY" \
             -H "Content-Type: application/json" \
             -d '{
