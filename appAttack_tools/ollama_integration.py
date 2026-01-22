@@ -1,5 +1,6 @@
 import ollama 
 import argparse
+import subprocess
 
 client = ollama.Client()
 
@@ -23,7 +24,7 @@ def choose_llm():
     #if no models are installed, prompt the user to install more or refer to user documentation
     if len(model_names) == 0:
         print("none!")
-        print('if you would like to install the most optimal model for your hardware, please refer to the user documentation. the models you can download here are less optimal but easier to install. would you like to install a model here? y/n')
+        print('if you would like to install the most optimal model for your hardware, please refer to the user documentation. \nthe models you can download here are less optimal but easier to install. would you like to install a model here? y/n')
         response = input().lower()
         
         while response not in ['y', 'n']:
@@ -44,13 +45,13 @@ def choose_llm():
             
             if response == '1':
                 print('installing, please wait. you will be prompted when the installation is complete.')
-                ollama.pull('deepseek-r1:8b')
+                subprocess.run(["ollama", "pull", "deepseek-r1:8b"], check=True)                
                 user_selected_model = 'deepseek-r1:8b'
                 return user_selected_model
                 
             if response == '2':
                 print('installing, please wait. you will be prompted when the installation is complete.')
-                ollama.pull('gpt-oss:20b')
+                subprocess.run(["ollama", "pull", "gpt-oss:20b"], check=True)  
                 user_selected_model = 'gpt-oss:20b'
                 return user_selected_model
 
