@@ -27,32 +27,64 @@ check_updates() {
 
 # Function to check for updates
 check_updates() {
+    
     # Prompt user to check for updates
-    read -p "Do you want to check for updates? (y/n): " check_updates
+
+    while true; do
+        read -p "Do you want to check for updates? (y/n): " check_updates
+        case "$check_updates" in
+            [Yy])         
+                log_message "Checking for updates..."
+                update_brakeman
+                update_bandit
+                update_owasp_zap
+                update_nikto
+                update_nmap
+                update_aircrack
+                update_reaver
+                update_ncrack
+                update_john
+                update_sqlmap
+                update_metasploit
+                update_wapiti
+                update_miranda
+                update_umap
+            # Display success message
+                echo -e "${GREEN}Updates checked successfully.${NC}"
+                break ;;
+            
+            [Nn]) 
+                echo -e "${YELLOW}Skipping updates check.${NC}"
+                break  ;;
+            *)
+                echo "Please answer 'y' or 'n'."
+                ;;
+        esac
+    done
     # If the user agrees to check for updates
-    if [[ "$check_updates" == "y" ]]; then
-        # Log message indicating update check
-        log_message "Checking for updates..."
-        update_brakeman
-        update_bandit
-        update_owasp_zap
-        update_nikto
-        update_nmap
-        update_aircrack
-        update_reaver
-        update_ncrack
-        update_john
-        update_sqlmap
-        update_metasploit
-	    update_wapiti
-        update_miranda
-        update_umap
-        # Display success message
-        echo -e "${GREEN}Updates checked successfully.${NC}"
-    else
-        # Display message indicating skipping of updates check
-        echo -e "${YELLOW}Skipping updates check.${NC}"
-    fi
+    # if [[ "$check_updates" == "y" ]]; then
+    #     # Log message indicating update check
+    #     log_message "Checking for updates..."
+    #     update_brakeman
+    #     update_bandit
+    #     update_owasp_zap
+    #     update_nikto
+    #     update_nmap
+    #     update_aircrack
+    #     update_reaver
+    #     update_ncrack
+    #     update_john
+    #     update_sqlmap
+    #     update_metasploit
+	#     update_wapiti
+    #     update_miranda
+    #     update_umap
+    #     # Display success message
+    #     echo -e "${GREEN}Updates checked successfully.${NC}"
+    # else
+    #     # Display message indicating skipping of updates check
+    #     echo -e "${YELLOW}Skipping updates check.${NC}"
+    # fi
 }
 
 

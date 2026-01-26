@@ -1,5 +1,6 @@
 #!/bin/bash
 
+automate_api_recon_process(){
 # Colours
 source "colours.sh"
 
@@ -41,3 +42,4 @@ if [ $? -ne 0 ]; then
 fi
 
 echo -e "${GREEN}API Reconnaissance Workflow completed successfully.${NC}"
+}

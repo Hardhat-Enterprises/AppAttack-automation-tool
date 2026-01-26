@@ -143,15 +143,8 @@ generate_ai_insights() {
 
     
         API_KEY="$GEMINI_API_KEY"
-        tool_parser="parsers/${tool}_parser.py"
-        if [[ -f "$tool_parser" ]]; then
-            PYTHON_RESPONSE=$(python3 "$tool_parser" "$output_file")
-            PROMPT=$(echo "$PYTHON_RESPONSE" | jq -r '.prompt')
-        else
-        # Fallback to raw output if parser not found
-            escaped_output=$(echo "$output" | sed 's/"/\\"/g')
-            PROMPT="Analyze this output and provide insights: $escaped_output"
-        fi
+        escaped_output=$(echo "$output" | sed 's/"/\\"/g')
+        PROMPT="Analyze this output and provide insights: $escaped_output"
 
 
         # Escape scan output
@@ -239,12 +232,6 @@ generate_ai_insights() {
 
 
 
-    # # Use the Python AI CLI which routes to cloud/local according to config
-    # SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-    # AI_CLI="$SCRIPT_DIR/ai/cli.py"
-    # # call the cli and extract text
-    # RESPONSE=$(python3 "$AI_CLI" get --prompt "$PROMPT" --timeout 30)
-    # INSIGHTS=$(echo "$RESPONSE" | jq -r '.text')
     
     #display the menu if and only if the user has a key to use the gemini api
     if [ -n "$GEMINI_API_KEY" ]; then

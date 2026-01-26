@@ -59,7 +59,7 @@ run_automated_scan() {
     echo "Starting automated scans for IP: $ip and Port: $port" >> $LOG_FILE
 
     run_nmap "$ip" >> $LOG_FILE 
-    generate_ai_insights "$nmap_ai_output" "$output_to_file" "$output_file" "nmap"
+    # generate_ai_insights "$nmap_ai_output" "$output_to_file" "$output_file" "nmap"
     run_nikto "$ip" "$port" >> $LOG_FILE
     generate_ai_insights  "$nikto_ai_output" "$output_to_file" "$output_file"
     run_owasp_zap "$ip" "$port" >> $LOG_FILE
@@ -76,4 +76,4 @@ run_automated_scan() {
 
 }
 
-run_automated_scan
+# run_automated_scan

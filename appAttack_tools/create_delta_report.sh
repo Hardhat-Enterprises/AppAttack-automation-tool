@@ -30,6 +30,7 @@ display_banner() {
 
 # === Delta Report Generation ===
 create_delta_report() {
+    display_banner
     read -p "Enter the path to the first scan report: " report1
     read -p "Enter the path to the second scan report: " report2
 
@@ -52,5 +53,5 @@ create_delta_report() {
 }
 
 # === Main Execution ===
-display_banner
-create_delta_report
+
+# create_delta_report

@@ -30,6 +30,8 @@ display_banner() {
 
 # === Start Android Emulator ===
 start_android_emulator() {
+    display_banner
+
     echo -e "${BGreen}[*] Starting Android Emulator...${NC}"
     /opt/android-sdk/emulator/emulator -avd test_avd -writable-system &>/dev/null &
     
@@ -52,5 +54,4 @@ start_android_emulator() {
 }
 
 # === Main Execution ===
-display_banner
-start_android_emulator
+# start_android_emulator

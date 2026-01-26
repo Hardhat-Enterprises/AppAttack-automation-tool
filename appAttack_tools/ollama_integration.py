@@ -36,12 +36,13 @@ def choose_llm():
             return user_selected_model
 
         if response == 'y':
-            print('select model number 1 if you have at least 4gb vram, 16gb ram, and 7gb disk space. \nselect model number 2 if you have at least 12gb vram, 16gb ram, and 15gb disk space.\nIf you have neither, you cannot run the locally hosted machines. Type 3 to exit.\n')
-            print('would you like to select model 1 or 2?')
+            print('1) Deepseek-r1:8b (min spec 8gb vram, 16gb ram, and 7gb disk space)\n2) gpt-oss:20b (min spec 12gb vram, 16gb ram, and 15gb disk space)\n3) gemma3:270m (runs on anything, results are generally poor. use strictly for testing purposes)\n0) return to menu\n')
+            print('If you do not meet minimum system requirements, you cannot run the locally hosted machines\n')
+            print('input the index number next to your desired model')
             
             response = input()
-            while response not in ['1', '2', '3']:
-                print('that was an invalid input, please input either 1, 2, or 3 to proceed')
+            while response not in ['1', '2', '3', '0']:
+                print('that was an invalid input, please input either 1, 2, 3, or 0 to proceed')
             
             if response == '1':
                 print('installing, please wait. you will be prompted when the installation is complete.')
@@ -54,8 +55,14 @@ def choose_llm():
                 subprocess.run(["ollama", "pull", "gpt-oss:20b"], check=True)  
                 user_selected_model = 'gpt-oss:20b'
                 return user_selected_model
-
+            
             if response == '3':
+                print('installing, please wait. you will be prompted when the installation is complete.')
+                subprocess.run(["ollama", "pull", "gemma3:270m"], check=True)  
+                user_selected_model = 'gemma3:270m'
+                return user_selected_model
+
+            if response == '0':
                 user_selected_model = 0
                 return user_selected_model
     else: 
@@ -70,10 +77,21 @@ def choose_llm():
 
         return model_names[int(user_selected_model) - 1]
 
+
+
 def chat_with_llm(user_selected_model, prompt):
     if user_selected_model != 0:
         if user_selected_model == 'gpt-oss:20b':
-            thinking_mode = True
+            print("thinking mode provides more accurate results but the model will take longer produce a response.")
+            think = input("would you like to enable thinking mode (y/n): ").lower()
+            while think not in ['y', 'n']:
+                think = input("that was an invalid input, please input either y or n: ").lower()
+
+            if think == 'y':
+                thinking_mode = True
+            else:
+                thinking_mode = False
+
         else:
             thinking_mode = False
         
@@ -95,8 +113,6 @@ def chat_with_llm(user_selected_model, prompt):
         for chunk in stream:
             print(chunk['message']['content'], end='', flush=True)
         print("\n+-----------------------------+")
-    else:
-        print('You have no valid model. Please refer to the user documentation for more information')
 try: 
     user_selected_model = choose_llm()
 
