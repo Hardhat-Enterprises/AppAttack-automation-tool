@@ -785,7 +785,7 @@ install_gitleaks() {
     sudo chmod +x /usr/local/bin/gitleaks
     rm /tmp/gitleaks.tar.gz
     echo -e "${GREEN}Gitleaks installed successfully!${NC}"
-
+}
 # Function to install Dredd (API testing tool)
 install_dredd() {
     if ! command -v dredd &> /dev/null; then

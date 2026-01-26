@@ -8,9 +8,7 @@ create_new_workflow() {
 
     # Get the list of available tools from the plugins directory
     local tools_dir="$SCRIPT_DIR/plugins"
-    local tools=($(ls "$tools_dir" | grep '.sh
- | sed 's/.sh$//'))
-
+    local tools=($(ls "$tools_dir" | grep '\.sh$' | sed 's/\.sh$//'))
     # The workflow definition
     local workflow=()
     local workflow_outputs=()
@@ -18,7 +16,7 @@ create_new_workflow() {
     while true; do
         echo -e "\n${BYellow}Select a tool to add to the workflow:${NC}"
         for i in "${!tools[@]}"; do
-            echo -e "${BCyan}"$((i+1)))${NC} ${White}${tools[$i]}${NC}"
+        echo -e "${BCyan}$((i+1))${NC} ${White}${tools[$i]}${NC}"        
         done
         echo -e "${BCyan}0)${NC} ${White}Done${NC}"
 

@@ -8,14 +8,7 @@ LOG_FILE="$HOME/automated_scan.log"
 
 >$LOG_FILE
 
-# Function to run nmap
-run_nmap() {
-    OUTPUT_DIR=$1
-    isIoTUsage=$2
-    timestamp=$(date +%F_%H-%M-%S)
-    output_dir="${OUTPUT_DIR}/nmap_scan_${timestamp}"
-    mkdir -p "$output_dir"
-    output_file="${output_dir}/nmap_output.txt"
+
 run_scoutsuite_scan() {
     local cloud_provider="$1" # aws, azure, gcp
     local profile="$2"        # Optional: AWS profile, Azure creds, etc.
@@ -71,17 +64,30 @@ run_gitleaks_scan() {
     jq '.findings | length' "$report_file" 2>/dev/null && echo "Secrets found: $(jq '.findings | length' "$report_file")"
 }
 
-    mkdir -p "$OUTPUT_DIR" # Created the output directory to resolve parsing issue
+# Function to run nmap
+run_nmap() {
+    OUTPUT_DIR=$1
+    isIoTUsage=$2
+
+    
+    # mkdir -p "$OUTPUT_DIR" # Created the output directory to resolve parsing issue
     
     echo -e "${NC}"
     read -p "Enter IP address or network range to scan (e.g., 192.168.1.0/24): " target
-    mkdir -p "$OUTPUT_DIR" 
+    # mkdir -p "$OUTPUT_DIR" 
 
     if [[ "$output_to_file" == "y" ]]; then
+
+        timestamp=$(date +%F_%H-%M-%S)
+        output_dir="${OUTPUT_DIR}/nmap_scan_${timestamp}"
+        mkdir -p "$output_dir"
+        output_file="${output_dir}/nmap_output.txt"
+
         if [[ "$isIoTUsage" == "true" ]]; then
             nmap_ai_output=$(nmap --top-ports 100 -v "$target" | tee "$output_file")
         else
             nmap_ai_output=$(nmap -v "$target" | tee "$output_file")
+            
         fi
     else
         if [[ "$isIoTUsage" == "true" ]]; then
@@ -89,30 +95,30 @@ run_gitleaks_scan() {
         else
             nmap_ai_output=$(nmap -v "$target")
         fi
-
-	echo "$nmap_output"
-        echo "$nmap_output" > "$output_file"
+    echo -e ""
+	echo -e "$nmap_ai_output"
     fi
-    if [[ -f "$output_file" ]]; then 
-    	python3 parsers/nmap_parser.py  "$output_file"
-    else
-    	echo -e "${RED}Error: Expected scan output file '$output_file' not found.${NC}"
-    fi
-    #generate_ai_insights "$nmap_output" "$output_to_file" "$output_file" "nmap"
-    
+    # if [[ -f "$output_file" ]]; then 
+    # 	python3 parsers/nmap_parser.py  "$output_file"
+    # else
+    # 	echo -e "${RED}Error: Expected scan output file '$output_file' not found.${NC}"
+    # fi
+    echo -e ""
     echo -e "${GREEN}Nmap scan completed.${NC}" 
 
-        echo "$nmap_ai_output" > "$output_file" # Save results to file so nmap_parser.py can read it
+    generate_ai_insights "$nmap_ai_output" "$output_to_file" "$output_file" "nmap"
+    
+
+    # echo "$nmap_ai_output" > "$output_file" # Save results to file so nmap_parser.py can read it
     
     
     # Run the parser if the Nmap output file exists
-    if [[ -f "$output_file" ]]; then
-       python3 parsers/nmap_parser.py "$output_file"
-    else
-       echo -e "${RED}Error: Exceptd scan output file '$output_file' not found.${NC}"
-    fi
-    echo "$nmap_ai_output"
-    echo -e "${GREEN}Nmap scan completed.${NC}"
+    # if [[ -f "$output_file" ]]; then
+    #    python3 parsers/nmap_parser.py "$output_file"
+    # else
+    #    echo -e "${RED}Error: Exceptd scan output file '$output_file' not found.${NC}"
+    # fi
+    # echo "$nmap_ai_output"
 
 }
      
@@ -264,7 +270,7 @@ run_nikto() {
 
     echo "$nikto_ai_output" 
 
-    echo "$nikto_ai_output"
+    # echo "$nikto_ai_output"
 
     echo -e "${GREEN} Nikto Operation completed.${NC}"
 }

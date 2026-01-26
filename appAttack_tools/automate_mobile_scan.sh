@@ -34,6 +34,7 @@ display_banner() {
 
 # === Automated Mobile Scan Workflow ===
 run_automated_mobile_scan() {
+    display_banner
     local apk_path="$1"
 
     if [ -z "$apk_path" ]; then
@@ -72,5 +73,5 @@ run_automated_mobile_scan() {
 }
 
 # === Main Execution ===
-display_banner
-run_automated_mobile_scan
+# 
+# run_automated_mobile_scan

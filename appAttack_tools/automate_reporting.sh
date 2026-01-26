@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+automate_reporting(){
 set -euo pipefail
 
 usage() {
@@ -94,8 +96,8 @@ output_csv() {
     echo "phase,tool,result" > "$OUTPUT_FILE"
   fi
   parse_results | while read -r line; do
-    [[ -n "$line" ]] && echo "${PHASE},${TOOL_NAME},\"${line//"/""}\"" >> "$OUTPUT_FILE"
-  done
+[[ -n $line ]] && printf '%s,%s,"%s"\n' "$PHASE" "$TOOL_NAME" "${line//\"/\"\"}" >> "$OUTPUT_FILE"
+  done 
 }
 
 # dispatch
@@ -105,3 +107,5 @@ case "$FORMAT" in
   csv) output_csv ;; 
   *) echo "Unknown format: $FORMAT" >&2; exit 1 ;;
  esac
+
+}

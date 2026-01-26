@@ -32,7 +32,7 @@ load_workflow() {
 
         echo -e "${GREEN}Loading workflow: $selected_workflow${NC}"
 
-        local workflow= ()
+        local workflow=()
         while IFS= read -r line; do
             workflow+=("$line")
         done < "$workflow_path"
@@ -54,7 +54,7 @@ save_workflow() {
     fi
 
     local workflow_path="$SCRIPT_DIR/workflows/$filename"
-    local workflow= ("$@")
+    local workflow=("$@")
 
     echo "" > "$workflow_path"
     for step in "${workflow[@]}"; do

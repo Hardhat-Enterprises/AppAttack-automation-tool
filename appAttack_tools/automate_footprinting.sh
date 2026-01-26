@@ -38,6 +38,7 @@ display_banner() {
 
 # === Footprinting Workflow ===
 run_footprinting_workflow() {
+    display_banner
     read -p "Enter target domain: " target_domain
 
     mkdir -p "$OUTPUT_DIR"
@@ -55,5 +56,5 @@ run_footprinting_workflow() {
 }
 
 # === Main Execution ===
-display_banner
-run_footprinting_workflow
+
+# run_footprinting_workflow

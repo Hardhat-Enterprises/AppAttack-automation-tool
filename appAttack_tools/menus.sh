@@ -5,15 +5,19 @@ source "$SCRIPT_DIR/automate_recon.sh"
 source "$SCRIPT_DIR/automate_reconnaissance.sh"
 source "$SCRIPT_DIR/automate_vulnerability_scan.sh"
 source "$SCRIPT_DIR/auto_exploitation.sh"
+source "$SCRIPT_DIR/automate_api_recon.sh"
 source "$SCRIPT_DIR/automate_post_exploitation.sh"
 source "$SCRIPT_DIR/automate_reporting.sh"
+source "$SCRIPT_DIR/workflow_builder.sh"
 source "$SCRIPT_DIR/automate_footprinting.sh"
 source "$SCRIPT_DIR/create_delta_report.sh"
 source "$SCRIPT_DIR/create_trend_analysis_report.sh"
+
 source "$SCRIPT_DIR/start_android_emulator.sh"
 source "$SCRIPT_DIR/automate_mobile_scan.sh"
 source "$SCRIPT_DIR/run_tools.sh"
 
+display_banner(){
 # Display the Banner
 echo -e "${BYellow}                                                                           ${Color_Off}"
 echo -e "${BRed} █████╗ ██████╗ ██████╗     █████╗ ████████╗████████╗ █████╗  ██████╗██╗  ██╗${Color_Off}"
@@ -25,7 +29,7 @@ echo -e "${BBlue}╚═╝  ╚═╝╚═╝     ╚═╝        ╚═╝  �
 echo -e "${BYellow}                                                                           ${Color_Off}"
 echo -e "${BPurple}              A Professional Pen-Testing/Secure Code Review Toolkit        ${Color_Off}"
 #echo -e "${BCyan}Usage:${Color_Off} ./app-attack.sh [options]"
-
+}
 display_main_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════╗${NC}"
     echo -e "${BYellow}║           Main Menu            ║${NC}"
@@ -38,8 +42,7 @@ display_main_menu() {
     echo -e "${BCyan}6)${NC} ${White}Container Security Tools${NC}"
     echo -e "${BCyan}7)${NC} ${White}Cloud Security Tools${NC}"
     echo -e "${BCyan}8)${NC} ${White}Mobile Security Tools${NC}"
-    echo -e "${BCyan}9)${NC} ${White}Exit${NC}" 
-    echo -e "${BCyan}10)${NC} ${White}LLM Integration (Local/Global)${NC}"
+    echo -e "${BCyan}0)${NC} ${White}Exit${NC}" 
     echo -e "${BYellow}╚════════════════════════════════╝${NC}"
 }
 
@@ -106,7 +109,7 @@ display_secure_code_review_tools_menu() {
     echo -e "${BCyan}5)${NC} ${White}Gitleaks: Secret scanning tool${NC}"
     echo -e "${BCyan}6)${NC} ${White}SonarQube: Continuous inspection of code quality and security${NC}"
 	echo -e "${BCyan}7)${NC} ${White}Dredd: API Security Testing (OpenAPI/Swagger)${NC}"
-    echo -e "${BCyan}8)${NC} ${White}Go Back${NC}"
+    echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
@@ -127,7 +130,7 @@ display_iot_security_tools_menu() {
     echo -e "${BCyan}10)${NC} ${White}Umap${NC}"
     echo -e "${BCyan}11)${NC} ${White}Wifiphisher${NC}"
     echo -e "${BCyan}12)${NC} ${White}Wireshark${NC}"
-    echo -e "${BCyan}13)${NC} ${White}Go Back${NC}"
+    echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚═══════════════════════════════════════════╝${NC}"
 }
 
@@ -139,7 +142,7 @@ display_step_by_step_guide_menu() {
     echo -e "${BCyan}1)${NC} ${White}Learn about Pen Testing tools${NC}"
     echo -e "${BCyan}2)${NC} ${White}Learn about Secure code review tools${NC}"
 	echo -e "${BCyan}3)${NC} ${White}Learn about IoT Security tools${NC}"
-    echo -e "${BCyan}4)${NC} ${White}Go Back${NC}"
+    echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
@@ -175,7 +178,7 @@ display_step_by_step_guide_pen_testing(){
     echo -e "${MAGENTA}6) SQLmap: SQL Injection and database takeover tool${NC}"
     echo -e "${CYAN}7) Metasploit Framework: Penetration testing framework${NC}"
     echo -e "${MAGENTA}8) Wapiti: Web Application Vulnerability Scanner${NC}"
-    echo -e "${YELLOW}9) Go Back${NC}"
+    echo -e "${YELLOW}0) Go Back${NC}"
    # display_asterisk
     
 }
@@ -190,7 +193,7 @@ display_step_by_step_guide_secure_code_review(){
     echo -e "${CYAN}3) brakeman: Scan a Ruby on Rails application for security vulnerabilities${NC}"
     echo -e "${MAGENTA}4) bandit: Security linter for Python code${NC}"
     echo -e "${CYAN}5) SonarQube: Continuous inspection of code quality and security${NC}"
-    echo -e "${YELLOW}6) Go Back"
+    echo -e "${YELLOW}0) Go Back"
   #  display_asterisk
     
 }
@@ -203,7 +206,7 @@ display_step_by_step_guide_iot_security_tools(){
     echo -e "${CYAN}3) Scapy: Forge, analyze, and manipulate network packets for testing and debugging.${NC}"
     echo -e "${MAGENTA}4) Wifiphisher: Simulate rogue access points for phishing and credential gathering.${NC}"
 	echo -e "${CYAN}5) Reaver: Perform brute-force attacks on WPS-enabled Wi-Fi networks to recover the WPA/WPA2 passphrase.${NC}"
-    echo -e "${YELLOW}6) Go Back"
+    echo -e "${YELLOW}0) Go Back"
   #  display_asterisk
 }
 
@@ -250,7 +253,7 @@ handle_secure_code_review_tools() {
             5) run_gitleaks_scan "$OUTPUT_DIR" ;;
             6) run_sonarqube "$OUTPUT_DIR" ;;
             7) run_dredd "$OUTPUT_DIR" ;;
-            8) break ;;
+            0) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac
     done
@@ -276,7 +279,7 @@ handle_iot_security_tools() {
             10) run_umap "$OUTPUT_DIR" ;;
             11) run_wifiphisher "$OUTPUT_DIR" ;;
             12) run_tshark "$OUTPUT_DIR" ;;
-            13) break ;;
+            0) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac
     done
@@ -298,7 +301,7 @@ handle_step_by_step_guide(){
             1) handle_step_by_step_guide_Pentest;;
             2) handle_step_by_step_guide_SCR;;
 			3) handle_step_by_step_guide_IoT;;
-            4) break ;;
+            0) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
             
         esac
@@ -314,17 +317,17 @@ handle_automated_processes_menu() {
         display_automated_processes_menu
         read -p "Choose an option: " choice
         case $choice in
-            1) run_automated_reconnaissance_scan ;; # Placeholder for Reconnaissance
-            2) run_vulnerability_scanning_process ;; # Placeholder
-            3) run_exploitation_process ;; # Placeholder
-            4) run_post_exploitation_process ;; # Placeholder
-            5) run_reporting_process ;; # Placeholder
-            6) run_footprinting_workflow ;;
-            7) run_api_recon_process ;; # Placeholder
-            8) create_delta_report ;;
-            9) create_trend_analysis_report ;;
-            10) run_automated_mobile_scan ;;
-            11) "$SCRIPT_DIR/workflow_builder.sh" ;;
+            1) run_automated_scan ;; #automate_reconnaissance.sh
+            2) run_automated_vulnerability_scan ;; #automate_vulnerability_scan.sh
+            3) run_exploitation_menu ;; #auto_exploitation.sh
+            4) automate_post_exploitation ;; #automate_post_exploitation.sh - this is poorly implemented and exits after executing
+            5) automate_reporting ;; #automate_reporting.sh - this is poorly implemented and exits after executing
+            6) run_footprinting_workflow ;; #automate_footprinting.sh
+            7) run_api_recon_process ;; #autopate_api_recon.sh
+            8) create_delta_report ;; #create_delta_report.sh
+            9) create_trend_analysis_report ;; #create_trend_analysis_report.sh
+            10) run_automated_mobile_scan ;; #automate_mobile_scan.sh
+            11) handle_workflow_builder ;; #workflow_builder.sh
             0) break ;; # Go back to main menu
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac
@@ -352,7 +355,7 @@ display_cloud_security_menu() {
     echo -e "${BYellow}║           Cloud Security Tools             ║${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
     echo -e "${BCyan}1)${NC} ${White}ScoutSuite (Audit AWS/Azure/GCP)${NC}"
-    echo -e "${BCyan}2)${NC} ${White}Go Back${NC}"
+    echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
@@ -366,7 +369,7 @@ handle_cloud_security_tools() {
                 read -p "Enter profile (leave blank for default): " profile
                 run_scoutsuite_scan "$provider" "$profile"
                 ;;
-            2) break ;;
+            0) break ;;
             *) echo "Invalid choice, try again." ;;
         esac
     done
@@ -434,8 +437,9 @@ run_footprinting_workflow() {
 
 run_api_recon_process() {
     echo "Running API Reconnaissance Process..."
+    automate_api_recon_process
     # Placeholder for API reconnaissance functionality
-    echo "API reconnaissance feature coming soon..."
+    #echo "API reconnaissance feature coming soon..."
 }
 
 handle_step_by_step_guide_SCR(){
@@ -455,7 +459,7 @@ handle_step_by_step_guide_SCR(){
             3) handle_step_by_step_SCR_brakeman;;
             4) handle_step_by_step_SCR_bandit;;
             5) handle_step_by_step_SCR_sonar ;;
-            6) break;;
+            0) break;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
             
         esac
@@ -483,7 +487,7 @@ handle_step_by_step_guide_Pentest(){
             6) handle_step_by_step_pentest_SQLmap;;
             7) handle_step_by_step_pentest_metasploit;;
 	        8) handle_step_by_step_pentest_wapiti ;;  
-            9) break ;;
+            0) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
             
         esac
@@ -508,36 +512,10 @@ handle_step_by_step_guide_IoT(){
             3) handle_step_by_step_IoT_scapy;;
             4) handle_step_by_step_IoT_wifiphisher;;
         	5) handle_step_by_step_IoT_reaver;;
-            6) break;;
+            0) break;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
             
         esac
         
     done
 }
-
-# Main program loop
-main() {
-    local OUTPUT_DIR="$SCRIPT_DIR/../output"
-    mkdir -p "$OUTPUT_DIR"
-    
-    while true; do
-        display_main_menu
-        read -p "Choose an option: " main_choice
-        case $main_choice in
-            1) handle_penetration_testing_tools "$OUTPUT_DIR" ;;
-            2) handle_secure_code_review_tools "$OUTPUT_DIR" ;;
-            3) handle_iot_security_tools "$OUTPUT_DIR" ;;
-            4) handle_step_by_step_guide ;;
-            5) handle_automated_processes_menu ;;
-            6) handle_container_security_tools "$OUTPUT_DIR" ;;
-            7) handle_cloud_security_tools ;;
-            8) handle_mobile_security_tools ;;
-            9) echo "Exiting..."; exit 0 ;;
-            *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
-        esac
-    done
-}
-
-# Run the main function
-main

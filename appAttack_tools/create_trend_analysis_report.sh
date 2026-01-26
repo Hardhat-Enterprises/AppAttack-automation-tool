@@ -30,6 +30,8 @@ display_banner() {
 
 # === Trend Analysis Report Generation ===
 create_trend_analysis_report() {
+    display_banner
+
     read -p "Enter the directory containing the scan reports: " reports_dir
 
     if [ ! -d "$reports_dir" ]; then
@@ -56,5 +58,4 @@ create_trend_analysis_report() {
 }
 
 # === Main Execution ===
-display_banner
-create_trend_analysis_report
+# create_trend_analysis_report
