@@ -1,0 +1,42 @@
+AppAttack Project Overview
+
+AppAttack is the cybersecurity division of Hardhat Enterprises.
+It focuses on penetration testing, secure code review, and the development of custom security tools.
+
+Purpose:
+AppAttack delivers professional security assessments for partner projects by identifying vulnerabilities,
+validating exploits, and strengthening defensive controls. It also advances research into automated and
+AI-assisted security testing.
+
+AppAttack Teams
+
+AppAttack operates through specialised teams that focus on different aspects of cybersecurity assessment,
+automation, and tool development. Each team contributes to delivering accurate, repeatable, and industry-
+aligned security outcomes.
+
+Penetration Testing Team:
+The Penetration Testing team is responsible for conducting security assessments against applications,
+networks, and infrastructure. The team identifies vulnerabilities, validates exploits, and produces
+professional security reports for partner projects.
+
+Primary Tools Used:
+- Nmap (network discovery and port scanning)
+- Burp Suite (web application security testing)
+- OWASP ZAP (automated web vulnerability scanning)
+- Nikto (web server vulnerability scanning)
+- Wapiti (web application vulnerability testing)
+- FuzzDB (attack payloads and fuzzing patterns)
+- Kali Linux (primary testing environment)
+
+Tool Development Team:
+The Tool Development team focuses on building internal automation, scripting, and AI-assisted security tools
+to support and scale penetration testing activities.
+
+Primary Tools and Technologies:
+- Bash scripting for automation
+- Custom CLI tools
+- Gemini AI and Gemini API integration
+- jq for JSON parsing and result processing
+- Docker for tool packaging and deployment
+- local LLM integration for offline analysis
+
