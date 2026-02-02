@@ -1,0 +1,34 @@
+AppAttack Tools and Technology Stack
+
+AppAttack operates primarily within a Kali Linux environment and focuses on automated and repeatable
+security testing workflows.
+
+Platforms and Environments:
+- Kali Linux Virtual Machine (OVA)
+- Docker-based tool deployment
+
+Programming and Scripting:
+- Bash scripting
+- Custom CLI automation
+- JSON processing using jq
+
+Security and Testing Tools:
+- Nmap (network discovery and scanning)
+- Burp Suite (web application testing)
+- OWASP ZAP (web vulnerability scanning)
+- Nikto (web server scanning)
+- Wapiti (web vulnerability scanner)
+- Snyk (dependency and code security analysis)
+- FuzzDB (payload and attack pattern database)
+
+Automation and AI:
+- Gemini AI for security analysis
+- Gemini API integration
+- local LLM integration for offline analysis(Ollama)
+- Context-aware tool recommendations
+
+Focus Areas:
+- Automated vulnerability discovery
+- Repeatable penetration testing workflows
+- AI-assisted interpretation of scan results
+- Secure configuration and reporting consistency

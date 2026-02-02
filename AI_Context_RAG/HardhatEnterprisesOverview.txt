@@ -1,0 +1,26 @@
+
+Hardhat Enterprises Overview
+
+Hardhat Enterprises is a cybersecurity-focused organization operating under Deakin University’s Capstone Program.
+Its primary objective is to enhance the cybersecurity posture of white-hat operations through practical,
+industry-aligned security projects.
+
+Vision:
+To position Deakin University’s Capstone Program and Hardhat Enterprises as a leader in cybersecurity education
+by delivering immersive, real-world learning experiences that prepare students for industry challenges.
+
+Mission:
+Hardhat Enterprises is dedicated to safeguarding assets, reducing threats, and preventing vulnerability
+exploitation. The organization focuses on developing open-source security tools, architectures, processes,
+and mitigation techniques to address real-world cybersecurity gaps.
+
+Core Activities:
+- Development of open-source cybersecurity tools
+- Security assessments and vulnerability analysis
+- Research into automation and AI-driven security solutions
+- Student upskilling through hands-on, industry-relevant projects
+
+Company Structure:
+Hardhat Enterprises operates with project-based teams led by team leads and supported by junior leads and members.
+The structure emphasizes collaboration, communication, and continuous skill development.
+
