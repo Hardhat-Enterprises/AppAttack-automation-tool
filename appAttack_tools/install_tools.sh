@@ -150,9 +150,9 @@ install_snyk_cli() {
         echo -e "${CYAN}Installing snyk cli...${NC}"
         sudo npm install -g snyk
         echo -e "${GREEN}Snyk cli installed successfully!${NC}"
-        echo -e "${YELLOW}Authenticating snyk...${NC}"
-        echo -e "${RED}Please authenticate by clicking 'Authenticate' in the browser to continue.${NC}"
-        snyk auth
+        echo -e "${YELLOW}Note: Snyk requires authentication before use.${NC}"
+        echo -e "${YELLOW}To authenticate later, run: snyk auth${NC}"
+        echo -e "${YELLOW}Or set a token directly with: SNYK_TOKEN=<your_token> snyk auth${NC}"
     else
         echo -e "${GREEN}snyk cli is already installed.${NC}"
     fi
