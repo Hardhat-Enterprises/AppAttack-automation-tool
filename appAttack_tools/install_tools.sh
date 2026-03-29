@@ -12,7 +12,7 @@ install_go() {
         return
     fi
     git clone https://github.com/udhos/update-golang &> /dev/null
-    cd update-golang  || exit 1
+    cd update-golang  || return 1
     # Run the update script, suppress all output
     {
         sudo ./update-golang.sh &> /dev/null
@@ -121,7 +121,7 @@ install_bandit() {
             echo -e "${GREEN}Bandit installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Bandit.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}Bandit is already installed.${NC}"
@@ -137,7 +137,7 @@ install_npm() {
         echo -e "${GREEN}npm installed successfully!${NC}"
     else
         echo -e "${RED}Failed to install npm.${NC}"
-        exit 1
+        return 1
     fi
 }
 
@@ -167,7 +167,7 @@ install_brakeman() {
             echo -e "${GREEN}Brakeman installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install brakeman.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}brakeman is already installed.${NC}"
@@ -199,7 +199,7 @@ install_nmap() {
             echo -e "${GREEN}nmap installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install nmap.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}nmap is already installed.${NC}"
@@ -215,7 +215,7 @@ install_aircrack() {
             echo -e "${GREEN}aircrack-ng installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install aircrack-ng.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}aircrack-ng is already installed.${NC}"
@@ -231,7 +231,7 @@ install_reaver() {
             echo -e "${GREEN}reaver installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install reaver.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}reaver is already installed.${NC}"
@@ -247,7 +247,7 @@ install_ncrack() {
             echo -e "${GREEN}ncrack installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install ncrack.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}ncrack is already installed.${NC}"
@@ -267,9 +267,9 @@ install_nikto() {
             # Display success message
             echo -e "${GREEN}nikto installed successfully!${NC}"
         else
-            #   Display failure message and exit script
+            #   Display failure message and return
             echo -e "${RED}Failed to install nikto.${NC}"
-            exit 1
+            return 1
         fi
     else
         # Display message if nikto is already installed
@@ -291,9 +291,9 @@ install_legion() {
             # Display success message
             echo -e "${GREEN}LEGION installed successfully!${NC}"
         else
-            # Display failure message and exit script
+            # Display failure message and return
             echo -e "${RED}Failed to install LEGION.${NC}"
-            exit 1
+            return 1
         fi
     else
         # Display message if LEGION is already installed
@@ -324,14 +324,14 @@ install_owasp_zap() {
                 # Display success message
                 echo -e "${GREEN}OWASP ZAP installed successfully!${NC}"
             else
-                # Display failure message and exit script
+                # Display failure message and return
                 echo -e "${RED}Failed to move OWASP ZAP.${NC}"
-                exit 1
+                return 1
             fi
         else
-            # Display failure message if download failed and exit script
+            # Display failure message if download failed and return
             echo -e "${RED}Failed to download OWASP ZAP.${NC}"
-            exit 1
+            return 1
         fi
     else
         # Display message if OWASP ZAP is already installed
@@ -348,7 +348,7 @@ install_john() {
             echo -e "${GREEN}John the Ripper installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install John the Ripper.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}John the Ripper is already installed.${NC}"
@@ -364,7 +364,7 @@ install_sqlmap() {
             echo -e "${GREEN}sqlmap installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install sqlmap.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}sqlmap is already installed.${NC}"
@@ -380,7 +380,7 @@ install_metasploit() {
             echo -e "${GREEN}Metasploit installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Metasploit.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}Metasploit is already installed.${NC}"
@@ -396,7 +396,7 @@ install_wapiti() {
             echo -e "${GREEN}Wapiti installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Wapiti.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}Wapiti is already installed.${NC}"
@@ -412,7 +412,7 @@ install_tshark() {
             echo -e "${GREEN}TShark installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install TShark.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}TShark is already installed.${NC}"
@@ -428,7 +428,7 @@ install_binwalk() {
             echo -e "${GREEN}Binwalk installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Binwalk.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}Binwalk is already installed.${NC}"
@@ -444,7 +444,7 @@ install_hashcat() {
             echo -e "${GREEN}Hashcat installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Hashcat.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}Hashcat is already installed.${NC}"
@@ -477,14 +477,14 @@ install_miranda() {
                 # Display success message
                 echo -e "${GREEN}Miranda installed successfully!${NC}"
             else
-                # Display failure message and exit script
+                # Display failure message and return
                 echo -e "${RED}Failed to move Miranda.${NC}"
-                exit 1
+                return 1
             fi
         else
-            # Display failure message if download failed and exit script
+            # Display failure message if download failed and return
             echo -e "${RED}Failed to download Miranda.${NC}"
-            exit 1
+            return 1
         fi
     else
         # Display message if Miranda is already installed
@@ -521,14 +521,14 @@ install_umap() {
                 # Display success message
                 echo -e "${GREEN}Umap installed successfully!${NC}"
             else
-                # Display failure message and exit script
+                # Display failure message and return
                 echo -e "${RED}Failed to move Umap.${NC}"
-                exit 1
+                return 1
             fi
         else
-            # Display failure message if download failed and exit script
+            # Display failure message if download failed and return
             echo -e "${RED}Failed to download Umap.${NC}"
-            exit 1
+            return 1
         fi
     else
         # Display message if Umap is already installed
@@ -546,7 +546,7 @@ install_bettercap() {
             echo -e "${GREEN}Bettercap installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Bettercap.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}Bettercap is already installed.${NC}"
@@ -563,7 +563,7 @@ install_scapy() {
             echo -e "${GREEN}Scapy installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Scapy.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}Scapy is already installed.${NC}"
@@ -690,7 +690,7 @@ install_wifiphisher() {
 
         if [ $? -ne 0 ]; then
             echo -e "${RED}Failed to clone Wifiphisher repository.${NC}"
-            exit 1
+            return 1
         fi
 
         # Fix Python compatibility issue with ConfigParser
@@ -698,7 +698,7 @@ install_wifiphisher() {
         sed -i 's/from ConfigParser import SafeConfigParser/from configparser import ConfigParser/' /tmp/wifiphisher/roguehostapd/config/hostapdconfig.py
 
         # Install Python dependencies and setup
-        cd /tmp/wifiphisher || exit
+        cd /tmp/wifiphisher || return 1
         echo -e "${CYAN}Installing Python dependencies...${NC}"
         sudo pip3 install -r requirements.txt
 
@@ -709,12 +709,12 @@ install_wifiphisher() {
             echo -e "${GREEN}Wifiphisher installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Wifiphisher.${NC}"
-            exit 1
+            return 1
         fi
 
         # Clean up
         echo -e "${YELLOW}Cleaning up...${NC}"
-        cd ~ || exit
+        cd ~ || return 1
         sudo rm -rf /tmp/wifiphisher
     else
         echo -e "${GREEN}Wifiphisher is already installed.${NC}"
@@ -730,26 +730,26 @@ install_reaver() {
         sudo apt update && sudo apt install -y build-essential libpcap-dev aircrack-ng git > /dev/null 2>&1
         if [ $? -ne 0 ]; then
             echo -e "${RED}Failed to install dependencies for Reaver.${NC}"
-            exit 1
+            return 1
         fi
 
         git clone https://github.com/t6x/reaver-wps-fork-t6x.git /tmp/reaver-wps-fork-t6x > /dev/null 2>&1
         if [ $? -ne 0 ]; then
             echo -e "${RED}Failed to clone Reaver repository.${NC}"
-            exit 1
+            return 1
         fi
 
-        cd /tmp/reaver-wps-fork-t6x/src || exit
+        cd /tmp/reaver-wps-fork-t6x/src || return 1
         ./configure > /dev/null 2>&1
         if [ $? -ne 0 ]; then
             echo -e "${RED}Configuration failed during Reaver installation.${NC}"
-            exit 1
+            return 1
         fi
 
         make > /dev/null 2>&1
         if [ $? -ne 0 ]; then
             echo -e "${RED}Failed to compile Reaver.${NC}"
-            exit 1
+            return 1
         fi
 
         sudo make install > /dev/null 2>&1
@@ -757,11 +757,11 @@ install_reaver() {
             echo -e "${GREEN}Reaver installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Reaver.${NC}"
-            exit 1
+            return 1
         fi
 
         # Clean up
-        cd ~ || exit
+        cd ~ || return 1
         sudo rm -rf /tmp/reaver-wps-fork-t6x
     else
         echo -e "${GREEN}Reaver is already installed.${NC}"
@@ -805,7 +805,7 @@ install_dredd() {
             echo -e "${GREEN}Dredd installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Dredd.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}Dredd is already installed.${NC}"
