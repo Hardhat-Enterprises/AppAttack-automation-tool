@@ -280,7 +280,7 @@ update_metasploit() {
             log_message "Metasploit Framework installed"
         else
             log_message "Failed to install Metasploit Framework"
-            exit 1
+            return 1
         fi
     else
         # Check the installed version against the latest available version
@@ -466,9 +466,9 @@ update_wifiphisher() {
             echo -e "${MAGENTA}Updating Wifiphisher...${NC}"
             sudo apt remove -y wifiphisher > /dev/null 2>&1
             git clone https://github.com/wifiphisher/wifiphisher.git /tmp/wifiphisher > /dev/null 2>&1
-            cd /tmp/wifiphisher || exit
+            cd /tmp/wifiphisher || return 1
             sudo python3 setup.py install > /dev/null 2>&1
-            cd ~ || exit
+            cd ~ || return 1
             sudo rm -rf /tmp/wifiphisher
             log_message "Wifiphisher updated to version $latest_version"
         else
@@ -495,11 +495,11 @@ update_reaver() {
                 sudo rm -rf reaver-wps-fork-t6x
             fi
             git clone https://github.com/t6x/reaver-wps-fork-t6x.git > /dev/null 2>&1
-            cd reaver-wps-fork-t6x/src || exit
+            cd reaver-wps-fork-t6x/src || return 1
             ./configure > /dev/null 2>&1
             make > /dev/null 2>&1
             sudo make install > /dev/null 2>&1
-            cd ~ || exit
+            cd ~ || return 1
             sudo rm -rf /tmp/reaver-wps-fork-t6x
             log_message "Reaver updated to version $latest_version"
         else
