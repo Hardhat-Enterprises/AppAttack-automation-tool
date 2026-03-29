@@ -36,7 +36,7 @@ create_delta_report() {
 
     if [ ! -f "$report1" ] || [ ! -f "$report2" ]; then
         echo -e "${BRed}Error: One or both report files not found.${NC}"
-        exit 1
+        return 1
     fi
 
     echo -e "${BGreen}[*] Generating delta report...${NC}"
