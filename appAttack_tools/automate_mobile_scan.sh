@@ -39,12 +39,12 @@ run_automated_mobile_scan() {
 
     if [ -z "$apk_path" ]; then
         echo -e "${BRed}Error: APK file path not provided.${NC}"
-        exit 1
+        return 1
     fi
 
     if [ ! -f "$apk_path" ]; then
         echo -e "${BRed}Error: APK file not found at '$apk_path'.${NC}"
-        exit 1
+        return 1
     fi
 
     # Start Android Emulator
