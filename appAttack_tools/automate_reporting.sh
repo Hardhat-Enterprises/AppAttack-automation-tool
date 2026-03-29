@@ -12,7 +12,7 @@ Usage: $0 -t TOOL_NAME -i INPUT_FILE -o OUTPUT_FILE [-p PHASE] [-f FORMAT]
   -p PHASE       : Testing phase (Scanning, Exploitation, Post-Exploitation). Default: Scanning
   -f FORMAT      : md | json | csv. Default: md
 EOF
-  exit 1
+  return 1
 }
 
 # defaults
@@ -105,7 +105,7 @@ case "$FORMAT" in
   md) output_md ;; 
   json) output_json ;; 
   csv) output_csv ;; 
-  *) echo "Unknown format: $FORMAT" >&2; exit 1 ;;
+  *) echo "Unknown format: $FORMAT" >&2; return 1 ;;
  esac
 
 }
