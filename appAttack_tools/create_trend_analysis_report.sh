@@ -36,7 +36,7 @@ create_trend_analysis_report() {
 
     if [ ! -d "$reports_dir" ]; then
         echo -e "${BRed}Error: Directory not found.${NC}"
-        exit 1
+        return 1
     fi
 
     echo -e "${BGreen}[*] Generating trend analysis report...${NC}"
