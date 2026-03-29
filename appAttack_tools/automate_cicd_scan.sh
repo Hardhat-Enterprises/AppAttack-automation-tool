@@ -1,4 +1,3 @@
-
 # If CI env var is set, run both scans non-interactively and exit
 if [[ "${CI:-}" == "true" ]]; then
   echo "[CI] Non-interactive mode: running Trivy + Gitleaks"
@@ -55,6 +54,6 @@ case $choice in
 	;;
       *)
       	echo -e "${RED}[!] Invalid option. Please run again.${NC}"
-      	exit 1 
+      	: # invalid option, ending 
       	;;
 esac
