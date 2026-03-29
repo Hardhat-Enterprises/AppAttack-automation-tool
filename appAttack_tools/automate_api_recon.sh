@@ -22,7 +22,7 @@ echo -e "${YELLOW}Running Dredd...${NC}"
 dredd "$api_description" "$target"
 if [ $? -ne 0 ]; then
     echo -e "${RED}Dredd failed. Aborting.${NC}"
-    exit 1
+    return 1
 fi
 
 # Nmap
@@ -30,7 +30,7 @@ echo -e "${YELLOW}Running Nmap...${NC}"
 nmap -p- -sV "$target"
 if [ $? -ne 0 ]; then
     echo -e "${RED}Nmap failed. Aborting.${NC}"
-    exit 1
+    return 1
 fi
 
 # Nikto
@@ -38,7 +38,7 @@ echo -e "${YELLOW}Running Nikto...${NC}"
 nikto -h "$target"
 if [ $? -ne 0 ]; then
     echo -e "${RED}Nikto failed. Aborting.${NC}"
-    exit 1
+    return 1
 fi
 
 echo -e "${GREEN}API Reconnaissance Workflow completed successfully.${NC}"
