@@ -9,6 +9,59 @@ LOG_FILE="$HOME/automated_scan.log"
 >$LOG_FILE
 
 
+
+
+run_owasp_zap_automated() {
+    local url=$1  
+    local output_dir=$2
+
+    #this is the locatoin that zap is installed in when downloaded via the functions in this tool
+    local zap_location="/usr/share/zaproxy/zap.sh"
+
+    if [[ ! -e $zap_location ]]; then
+        echo -e "zap file cannot be found at $zap_location"
+        return 1 
+    fi
+
+    "$zap_location" -cmd -quickurl "$url" -quickout "$output_dir/zap.html" -quickprogress
+
+
+}
+
+
+#  Function to run nmap in automated scan (fixes ai insights freezing bug)
+run_nmap_automated() {
+    local ip=$1
+    local output_dir=$2
+    
+    output_file="$output_dir/nmap_output.txt"
+    nmap -v "$ip" | tee "$output_file"
+
+}
+   
+
+run_wapiti_automated() {
+    local url=$1
+    local output_dir=$2
+
+    wapiti -u "$url" -f html -o "$output_dir"
+
+}
+
+
+run_nikto_automated() {
+    local url=$1
+    local output_dir=$2
+
+    nikto -host "$url" -output "$output_dir/nikto" -Format html
+    
+}
+
+
+
+
+
+
 run_scoutsuite_scan() {
     local cloud_provider="$1" # aws, azure, gcp
     local profile="$2"        # Optional: AWS profile, Azure creds, etc.
@@ -98,29 +151,52 @@ run_nmap() {
     echo -e ""
 	echo -e "$nmap_ai_output"
     fi
-    # if [[ -f "$output_file" ]]; then 
-    # 	python3 parsers/nmap_parser.py  "$output_file"
-    # else
-    # 	echo -e "${RED}Error: Expected scan output file '$output_file' not found.${NC}"
-    # fi
+
     echo -e ""
     echo -e "${GREEN}Nmap scan completed.${NC}" 
 
     generate_ai_insights "$nmap_ai_output" "$output_to_file" "$output_file" "nmap"
     
 
-    # echo "$nmap_ai_output" > "$output_file" # Save results to file so nmap_parser.py can read it
-    
-    
-    # Run the parser if the Nmap output file exists
-    # if [[ -f "$output_file" ]]; then
-    #    python3 parsers/nmap_parser.py "$output_file"
-    # else
-    #    echo -e "${RED}Error: Exceptd scan output file '$output_file' not found.${NC}"
-    # fi
-    # echo "$nmap_ai_output"
-
 }
+
+# #  Function to run nmap in automated scan (fixes ai insights freezing bug)
+# run_nmap_automated() {
+#     url=$1
+#     OUTPUT_DIR=$2
+
+
+    
+#     # mkdir -p "$OUTPUT_DIR" # Created the output directory to resolve parsing issue
+    
+#     echo -e "${NC}"
+
+#     # mkdir -p "$OUTPUT_DIR" 
+
+#     if [[ "$output_to_file" == "y" ]]; then
+
+#         timestamp=$(date +%F_%H-%M-%S)
+#         output_dir="${OUTPUT_DIR}/nmap_scan_${timestamp}"
+#         mkdir -p "$output_dir"
+#         output_file="${output_dir}/nmap_output.txt"
+
+#         nmap_ai_output=$(nmap -v "$url" | tee "$output_file")
+
+            
+#     else
+#         nmap_ai_output=$(nmap -v "$url")
+
+#     echo -e ""
+# 	echo -e "$nmap_ai_output"
+#     fi
+
+#     echo -e ""
+#     echo -e "${GREEN}Nmap scan completed.${NC}" 
+
+#     # generate_ai_insights "$nmap_ai_output" "$output_to_file" "$output_file" "nmap"
+    
+
+# }
      
 
 # Function to run Trivy
@@ -275,16 +351,22 @@ run_nikto() {
     echo -e "${GREEN} Nikto Operation completed.${NC}"
 }
 
-run_nikto_automated() {
-    OUTPUT_DIR=$1
-    URL=$2
+# run_nikto_automated() {
 
-    output_file="${OUTPUT_DIR}/nikto_output.txt"
+#     # read -p "Enter URL and port to scan (Example: http://localhost:4200): " url
 
-    nikto_ai_output=$(nikto -h "$URL" -o "$output_file" -Format "$format")
-    generate_ai_insights "$nikto_ai_output" "$output_to_file" "$output_file"
-    echo "Nikto scan completed." 
-}
+#     local ip=$1
+#     local port=$2
+
+#     # if [[ "$output_to_file" == "y" ]]; then
+#     #     read -p "Enter the output format (txt, html, xml): " format
+#     #     nikto_ai_output=$(nikto -h "$url"  -Format "$format")
+#     # fi
+
+#     nikto_ai_output=$(nikto -host "$ip" -port "$port")
+    
+#     echo "Nikto scan completed." 
+# }
 
 
 
@@ -370,6 +452,16 @@ run_owasp_zap_headless() {
     kill "$ZAP_PID"
 }
 
+
+# run_owasp_zap_automated() {
+#     local url=$1  
+#     # local zap_location="/usr/share/zaproxy/zap.sh"
+
+#     /usr/share/zaproxy/zap.sh -cmd -quickurl "$url" -quickout "/home/kali/automated_scans/report.html"
+
+#     echo -e "owasp zap scan complete"
+
+# }
 
 
 # Function to run John the Ripper
@@ -558,16 +650,14 @@ run_wapiti() {
     echo -e "${GREEN}Wapiti scan completed. Results saved to $OUTPUT_SUBDIR and log saved to $LOG_TXT.${NC}"
 }
 
-run_wapiti_automated() {
-    OUTPUT_DIR=$1
-    URL=$2
+# run_wapiti_automated() {
+    
+#     local url=$1
+#     local output_dir=$2
 
-    output_file="${OUTPUT_DIR}/wapiti_report.txt"
+#     wapiti_ai_output=$(wapiti -u "$url" -f txt -o "$output_dir")
 
-    wapiti_ai_output=$(wapiti -u "$url" -f json -o "$output_file")
-    generate_ai_insights "$wapiti_ai_output"
-    echo "Wapiti report saved to $output_file"
-}
+# }
 
 
 

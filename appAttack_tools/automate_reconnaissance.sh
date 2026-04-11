@@ -3,10 +3,13 @@
 #source the run_tools.sh script to use its functions
 source run_tools.sh
 source utilities.sh
-#Define the log file location
-LOG_FILE="$HOME/automated_scan.log"
 
-> $LOG_FILE
+
+#Define the log file location
+# LOG_FILE="$HOME/automated_scan.log"
+
+
+# > $LOG_FILE
 
 # Function to validate IP address
 validate_ip() {
@@ -36,44 +39,85 @@ validate_port() {
     fi
 }
 
+#validate url
+validate_target_url() {
+    local url="$1"
+    #url must be either http or https and optionally has a www at the beginning 
+    local regex="^https?://(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}([-a-zA-Z0-9()@:%_+.~#?&/=]*)$"
+
+    if [[ $url =~ $regex ]]; then       
+        return 0
+    else
+        return 1
+    fi
+}
+
+
+#extracts the hostname from a url
+extract_host() {
+    echo "$1" | sed -e 's|^[^/]*//||' -e 's|/.*$||' -e 's|:.*$||'
+}
+
 # Run automated scans
 run_automated_scan() {
-    while true; do
-        read -p "Enter the target IP address: " ip
-        if validate_ip "$ip"; then
-            break
-        else
-            echo "Invalid IP address. Please enter a valid IPv4 address."
+
+    if [[ "$output_to_file" == "n" ]]; then
+        echo -e "you cannot access this functionality without outputting results to a folder or file"
+        return 1
+    fi
+
+    #directory that will hold automated scan outputs
+    timestamp=$(date +%F_%H-%M-%S)
+    AUTOMATED_SCAN_OUTPUT_DIR="$OUTPUT_DIR/automated_scans/$timestamp"
+    mkdir -p $AUTOMATED_SCAN_OUTPUT_DIR
+
+    echo -e "Target selection"
+    while true; do 
+        read -p "Enter target URL or IP: " target
+        if [[ "$target" =~ ^[0-9.]+$ ]]; then  #if target contains only numbers and full stops, assume it is an ip and validate it accordingly
+
+            if validate_ip "$target"; then
+                ip=$target
+                url="http://$ip"
+                break
+            else 
+                echo "Invalid IP address. Please enter a valid IPv4 address."
+            fi
+            
+        else #else assume its url
+            if validate_target_url "$target"; then
+                url=$target
+                ip=$(extract_host "$url")
+                break
+            else
+                echo "Invalid url address. Please follow the format shown in example: http(s)://www.example.com"
+            fi
         fi
     done
 
-    while true; do
-        read -p "Enter the target port: " port
-        if validate_port "$port"; then
-            break
-        else
-            echo "Invalid port number. Please enter a number between 1 and 65535."
-        fi
-    done
 
-    echo "Starting automated scans for IP: $ip and Port: $port" >> $LOG_FILE
+    echo -e "Automated scan outputs can be found at $AUTOMATED_SCAN_OUTPUT_DIR"
 
-    run_nmap "$ip" >> $LOG_FILE 
+
+    #getting ai insights for each automated scan can be quite tedious and slows the automated pipeline
+    echo -e "\n${GREEN}Starting owasp zap scan${NC}"
+    run_owasp_zap_automated "$url" "$AUTOMATED_SCAN_OUTPUT_DIR" 
+    # generate_ai_insights "$zap_ai_output" "$output_to_file" "$output_file" "$output_to_file" "$output_file"
+
+    echo -e "\n${GREEN}Starting nikto scan, press space to see progress and estimated completion time${NC}"
+    run_nikto_automated "$url" "$AUTOMATED_SCAN_OUTPUT_DIR" 
+    # generate_ai_insights  "$nikto_ai_output" "$output_to_file" "$output_file"
+    
+    echo -e "\n${GREEN}Starting wapiti scan${NC}"
+    run_wapiti_automated "$url" "$AUTOMATED_SCAN_OUTPUT_DIR" 
+    # generate_ai_insights "$wapiti_ai_output"
+
+
+    echo -e "\n${GREEN}Starting nmap scan${NC}"
+    run_nmap_automated "$ip" "$AUTOMATED_SCAN_OUTPUT_DIR" 
     # generate_ai_insights "$nmap_ai_output" "$output_to_file" "$output_file" "nmap"
-    run_nikto "$ip" "$port" >> $LOG_FILE
-    generate_ai_insights  "$nikto_ai_output" "$output_to_file" "$output_file"
-    run_owasp_zap "$ip" "$port" >> $LOG_FILE
-    generate_ai_insights "$zap_ai_output" "$output_to_file" "$output_file" "$output_to_file" "$output_file"
-    run_wapiti "$ip" "$port" >> $LOG_FILE
-    generate_ai_insights "$wapiti_ai_output"
-    echo "Reconnaissance automation completed." >> $LOG_FILE
 
-    ## Uncomment to get ai insights on each scan. ##
-
-
-    ## Uncomment to run ai insights on zap and wapiti scans. Currently they don't work ##
-    ## The argument size for curl is too large. Need to find a solution ##
+    echo -e "${GREEN}Reconnaissance automation completed ${NC}"
 
 }
 
-# run_automated_scan
