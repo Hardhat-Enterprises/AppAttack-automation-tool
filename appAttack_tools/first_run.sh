@@ -21,41 +21,28 @@ fi
 if ! command -v go &> /dev/null; then
     install_go
 fi
-    #check and install ollama
+
+# install_function reaver
+# install_function gobuster
+# install_function bandit
+
+
 install_ollama
-# Check and install osv-scanner
 install_osv_scanner
-# Check and install snyk cli
 install_snyk_cli
-# Check and install brakeman
 install_brakeman
-# Check and install bandit
-install_bandit
-# Check and install nmap
-install_nmap
-# Check and install nikto
-install_nikto
-# Check and install legion
-install_legion
-# Check and install OWASP ZAP
-install_owasp_zap
-# Check and install generate_ai_insights dependencies
+# install_owasp_zap
 install_generate_ai_insights_dependencies
-# Check and install John
-install_john
-# Check and install sqlmap
-install_sqlmap
-# Check and install metasploit
 install_metasploit
-# install sonarqube
 install_sonarqube
-# Check and install wapiti
-install_wapiti
+install_function john
+install_function sqlmap
+install_function bandit
+install_function nmap
+install_function nikto
+install_function legion
+install_function wapiti
+install_function zaproxy
 
-# Check for updates for the installed tools
-check_updates
 
-
-#runs main file
-source "./main.sh"
 
