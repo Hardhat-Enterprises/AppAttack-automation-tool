@@ -1,3 +1,19 @@
+install_function() {
+    local name="$1"
+    if ! command -v "$name" &> /dev/null; then
+    echo -e "${MAGENTA}Installing ${name}...${NC}"
+    sudo apt update && sudo apt install -y "$name"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}${name} installed successfully!${NC}"
+    else
+        echo -e "${RED}Failed to install ${name}.${NC}"
+    fi
+else
+    echo -e "${GREEN}${name} is already installed.${NC}"
+fi
+}
+
+
 # Function to install Go (programming language) if not already installed
 install_go() {
     # Check current Go version
@@ -73,26 +89,6 @@ install_trivy() {
     fi
 }
 
-
-
-install_gobuster() { 
-    #Check if Gobuster is already installed 
-    echo "[*] Checking for Gobuster..."
-    if command -v gobuster >/dev/null 2>&1; then 
-        echo "[+] Gobuster is already installed at: $(command -v gobuster)"
-    #Install Gobuster
-    else 
-        echo "[*] Installing Gobuster..."
-        sudo apt update
-        sudo apt install -y gobuster
-        if command -v gobuster >/dev/null 2>&1; then 
-            echo "[+] Gobuster successfully installed"
-        else 
-            echo "[!] Gobuster installation failed."
-        fi
-    fi
-}
-
 install_sonarqube() {
     # Check if SonarQube Docker container is already installed
     if ! sudo docker images | grep -q sonarqube; then
@@ -113,20 +109,6 @@ install_sonarqube() {
     fi
 }
 
-install_bandit() {
-    if ! command -v bandit &> /dev/null; then
-        echo -e "${CYAN}Installing Bandit...${NC}"
-        sudo apt update && sudo apt install -y bandit
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}Bandit installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install Bandit.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}Bandit is already installed.${NC}"
-    fi
-}
 
 # Function to install npm (Node.js package manager) if not already installed
 install_npm() {
@@ -190,186 +172,9 @@ install_osv_scanner() {
 }
 
 
-# Function to install Nmap if not already installed
-install_nmap() {
-    if ! command -v nmap &> /dev/null; then
-        echo -e "${MAGENTA}Installing nmap...${NC}"
-        sudo apt update && sudo apt install -y nmap
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}nmap installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install nmap.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}nmap is already installed.${NC}"
-    fi
-}
 
-# Function to install Aircrack if not already installed
-install_aircrack() {
-    if ! command -v aircrack-ng &> /dev/null; then
-        echo -e "${MAGENTA}Installing aircrack-ng...${NC}"
-        sudo apt update && sudo apt install -y aircrack-ng
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}aircrack-ng installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install aircrack-ng.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}aircrack-ng is already installed.${NC}"
-    fi
-}
 
-# Function to install Reaver if not already installed
-install_reaver() {
-    if ! command -v reaver &> /dev/null; then
-        echo -e "${MAGENTA}Installing reaver...${NC}"
-        sudo apt update && sudo apt install -y reaver
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}reaver installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install reaver.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}reaver is already installed.${NC}"
-    fi
-}
 
-# Function to install Ncrack if not already installed
-install_ncrack() {
-    if ! command -v ncrack &> /dev/null; then
-        echo -e "${MAGENTA}Installing ncrack...${NC}"
-        sudo apt update && sudo apt install -y ncrack
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}ncrack installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install ncrack.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}ncrack is already installed.${NC}"
-    fi
-}
-
-# Function to install nikto
-install_nikto() {
-    # Check if nikto is not installed
-    if ! command -v nikto &> /dev/null; then
-        # Display message indicating nikto installation
-        echo -e "${CYAN}Installing nikto...${NC}"
-        # Update package list and install nikto
-        sudo apt update && sudo apt install -y nikto
-        # Check if the installation was successful
-        if [ $? -eq 0 ]; then
-            # Display success message
-            echo -e "${GREEN}nikto installed successfully!${NC}"
-        else
-            #   Display failure message and exit script
-            echo -e "${RED}Failed to install nikto.${NC}"
-            exit 1
-        fi
-    else
-        # Display message if nikto is already installed
-        echo -e "${GREEN}nikto is already installed.${NC}"
-    fi
-}
-# Function to install LEGION
-install_legion() {
-    # Check if legion is not installed
-    if ! command -v legion &> /dev/null; then
-        # Display message indicating LEGION installation
-        echo -e "${MAGENTA}Installing LEGION...${NC}"
-        # Update package list
-        sudo apt update
-        # Install legion
-        sudo apt install -y legion
-        # Check if the installation was successful
-        if [ $? -eq 0 ]; then
-            # Display success message
-            echo -e "${GREEN}LEGION installed successfully!${NC}"
-        else
-            # Display failure message and exit script
-            echo -e "${RED}Failed to install LEGION.${NC}"
-            exit 1
-        fi
-    else
-        # Display message if LEGION is already installed
-        echo -e "${GREEN}LEGION is already installed.${NC}"
-    fi
-}
-
-# Function to install OWASP ZAP
-install_owasp_zap() {
-    # Check if OWASP ZAP is not installed by checking its directory
-    if [ ! -d "/opt/owasp-zap/" ]; then
-        # Display message indicating OWASP ZAP installation
-        echo -e "${CYAN}Installing OWASP ZAP...${NC}"
-        # Download OWASP ZAP tar file to /tmp directory
-        wget https://github.com/zaproxy/zaproxy/releases/download/v2.15.0/ZAP_2.15.0_Linux.tar.gz -P /tmp
-        # Check if the download was successful
-        if [ $? -eq 0 ]; then
-            # Create directory for OWASP ZAP in /opt
-            sudo mkdir -p /opt/owasp-zap
-            # Change ownership of the OWASP ZAP directory to the current user
-            sudo chown -R $(whoami):$(whoami) /opt/owasp-zap
-            # Extract the downloaded tar file to the OWASP ZAP directory
-            tar -xf /tmp/ZAP_2.15.0_Linux.tar.gz -C /opt/owasp-zap/
-            # Create a symbolic link for the OWASP ZAP executable in /usr/local/bin
-            sudo ln -s /opt/owasp-zap/ZAP_2.15.0/zap.sh /usr/local/bin/zap
-            # Check if the symbolic link creation was successful
-            if [ $? -eq 0 ]; then
-                # Display success message
-                echo -e "${GREEN}OWASP ZAP installed successfully!${NC}"
-            else
-                # Display failure message and exit script
-                echo -e "${RED}Failed to move OWASP ZAP.${NC}"
-                exit 1
-            fi
-        else
-            # Display failure message if download failed and exit script
-            echo -e "${RED}Failed to download OWASP ZAP.${NC}"
-            exit 1
-        fi
-    else
-        # Display message if OWASP ZAP is already installed
-        echo -e "${GREEN}OWASP ZAP is already installed.${NC}"
-    fi
-}
-
-# Function to install John the Ripper if not already installed
-install_john() {
-    if ! command -v john &> /dev/null; then
-        echo -e "${MAGENTA}Installing John the Ripper...${NC}"
-        sudo apt update && sudo apt install -y john
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}John the Ripper installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install John the Ripper.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}John the Ripper is already installed.${NC}"
-    fi
-}
-
-# Function to install sqlmap if not already installed
-install_sqlmap() {
-    if ! command -v sqlmap &> /dev/null; then
-        echo -e "${MAGENTA}Installing sqlmap...${NC}"
-        sudo apt update && sudo apt install -y sqlmap
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}sqlmap installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install sqlmap.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}sqlmap is already installed.${NC}"
-    fi
-}
 
 # Function to install Metasploit if not already installed
 install_metasploit() {
@@ -387,69 +192,7 @@ install_metasploit() {
     fi
 }
 
-# Function to install Wapiti (a vulnerability scanner) if not already installed
-install_wapiti() {
-    if ! command -v wapiti &> /dev/null; then
-        echo -e "${CYAN}Installing Wapiti...${NC}"
-        sudo apt update && sudo apt install -y wapiti
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}Wapiti installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install Wapiti.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}Wapiti is already installed.${NC}"
-    fi
-}
 
-# Function to install Tshark (Wireshark CLI), if it is not already installed
-install_tshark() {
-    if ! command -v tshark &> /dev/null; then
-        echo -e "${CYAN}Installing TShark...${NC}"
-        sudo apt update && sudo apt install -y tshark
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}TShark installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install TShark.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}TShark is already installed.${NC}"
-    fi
-}
-
-# Function to install Binwalk (Firmware analyzer), if it is not already installed
-install_binwalk() {
-    if ! command -v binwalk &> /dev/null; then
-        echo -e "${CYAN}Installing Binwalk...${NC}"
-        sudo apt update && sudo apt install -y binwalk
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}Binwalk installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install Binwalk.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}Binwalk is already installed.${NC}"
-    fi
-}
-
-# Function to install Hashcat (Fast password recovery, cracking), if it is not already installed
-install_hashcat() {
-    if ! command -v hashcat &> /dev/null; then
-        echo -e "${CYAN}Installing Hashcat...${NC}"
-        sudo apt update && sudo apt install -y hashcat
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}Hashcat installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install Hashcat.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}Hashcat is already installed.${NC}"
-    fi
-}
 
 # Function to install Miranda (UPnP testing tool), if it is not already installed
 install_miranda() {
@@ -536,39 +279,7 @@ install_umap() {
     fi
 }
 
-# Function to install Bettercap if not already installed
 
-install_bettercap() {
-    if ! command -v bettercap &> /dev/null; then
-        echo -e "${CYAN}Installing Bettercap...${NC}"
-        sudo apt update && sudo apt install -y bettercap
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}Bettercap installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install Bettercap.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}Bettercap is already installed.${NC}"
-    fi
-}
-
-# Function to install scapy if not already installed
-install_scapy() {
-    if ! command -v scapy &> /dev/null; then
-        echo -e "${CYAN}Installing Scapy...${NC}"
-        sudo apt update > /dev/null 2>&1
-        sudo apt install -y python3-scapy > /dev/null 2>&1
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}Scapy installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install Scapy.${NC}"
-            exit 1
-        fi
-    else
-        echo -e "${GREEN}Scapy is already installed.${NC}"
-    fi
-}
 
 # Function to install Subfinder
 install_subfinder() {
@@ -722,52 +433,6 @@ install_wifiphisher() {
 }
 
 
-
-# Function to install Reaver if not already installed
-install_reaver() {
-    if ! command -v reaver &> /dev/null; then
-        echo -e "${CYAN}Installing Reaver...${NC}"
-        sudo apt update && sudo apt install -y build-essential libpcap-dev aircrack-ng git > /dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            echo -e "${RED}Failed to install dependencies for Reaver.${NC}"
-            exit 1
-        fi
-
-        git clone https://github.com/t6x/reaver-wps-fork-t6x.git /tmp/reaver-wps-fork-t6x > /dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            echo -e "${RED}Failed to clone Reaver repository.${NC}"
-            exit 1
-        fi
-
-        cd /tmp/reaver-wps-fork-t6x/src || exit
-        ./configure > /dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            echo -e "${RED}Configuration failed during Reaver installation.${NC}"
-            exit 1
-        fi
-
-        make > /dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            echo -e "${RED}Failed to compile Reaver.${NC}"
-            exit 1
-        fi
-
-        sudo make install > /dev/null 2>&1
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}Reaver installed successfully!${NC}"
-        else
-            echo -e "${RED}Failed to install Reaver.${NC}"
-            exit 1
-        fi
-
-        # Clean up
-        cd ~ || exit
-        sudo rm -rf /tmp/reaver-wps-fork-t6x
-    else
-        echo -e "${GREEN}Reaver is already installed.${NC}"
-    fi
-}
-
 install_gitleaks() {
     if command -v gitleaks &> /dev/null; then
         echo -e "${GREEN}Gitleaks is already installed.${NC}"
@@ -896,35 +561,34 @@ install_ollama(){
     fi
 }
 
-
 case $1 in 
-    gobuster)   install_gobuster ;;
+    gobuster)   install_function gobuster ;;
     trivy)   install_trivy ;;
     go)   install_go ;;
     sonarqube)   install_sonarqube ;;
-    bandit)   install_bandit ;;
+    bandit)   install_function bandit ;;
     npm)   install_npm ;;
     snykcli)   install_snyk_cli ;;
     brakeman)   install_brakeman ;;
     osvscanner)   install_osv_scanner ;;
-    nmap)   install_nmap ;;
-    aircrack)   install_aircrack ;;
-    reaver)   install_reaver ;;
-    ncrack)   install_ncrack ;;
-    nikto)   install_nikto ;;
-    legion)   install_legion ;;
-    owaspzap)   install_owasp_zap ;;
-    john)   install_john ;;
-    sqlmap)   install_sqlmap ;;
+    nmap)   install_function nmap ;;
+    aircrack)   install_function aircrack-ng ;;
+    reaver)   install_function reaver ;;
+    ncrack)   install_function ncrack ;;
+    nikto)   install_function nikto ;;
+    legion)   install_function legion ;;
+    owaspzap)   install_function zaproxy ;;
+    john)   install_function john ;;
+    sqlmap)   install_function sqlmap ;;
     metasploit)   install_metasploit ;;
-    wapiti)   install_wapiti ;;
-    tshark)   install_tshark ;;
-    binwalk)   install_binwalk ;;
-    hashcat)   install_hashcat ;;
+    wapiti)   install_function wapiti ;;
+    tshark)   install_function tshark ;;
+    binwalk)   install_function binwalk ;;
+    hashcat)   install_function hashcat ;;
     miranda)   install_miranda ;;
     umap)   install_umap ;;
-    bettercap)   install_bettercap ;;
-    scrapy)   install_scrapy ;;
+    bettercap)   install_function bettercap ;;
+    scapy)   install_function scapy ;;
     wifiphisher)   install_wifiphisher ;;
     dredd)   install_dredd ;;
     subfinder)   install_subfinder ;;

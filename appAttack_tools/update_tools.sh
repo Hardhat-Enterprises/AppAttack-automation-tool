@@ -1,30 +1,4 @@
 #!/bin/bash
-# Function to check for updates for the installed security tools
-check_updates() {
-    log_message "Checking for updates..."
-    
-    # Update APT package lists if they haven't been updated in the last day
-    if [ $(sudo find /var/lib/apt/lists -type f -mtime +1 | wc -l) -gt 0 ]; then
-        sudo apt update -qq
-    fi
-    
-    # Update individual tools
-    update_brakeman
-    update_snyk
-    update_owasp_zap
-    update_nikto
-    update_nmap
-    update_aircrack
-    update_reaver
-    update_ncrack
-    update_john
-    update_sqlmap
-    update_metasploit
-    update_wapiti
-    update_miranda
-    update_umap
-}
-
 # Function to check for updates
 check_updates() {
     
@@ -35,20 +9,30 @@ check_updates() {
         case "$check_updates" in
             [Yy])         
                 log_message "Checking for updates..."
-                update_brakeman
-                update_bandit
-                update_owasp_zap
+                # Update the APT package lists if they havent been updated in the last day
+                # if [ $(sudo find /var/lib/apt/lists -type f -mtime +1 | wc -l) -gt 0 ]; then
+                #     sudo apt update -qq
+                # fi
+
+                local tool_directory=$(pwd)
+                
                 update_nikto
-                update_nmap
-                update_aircrack
-                update_reaver
-                update_ncrack
-                update_john
+                update_brakeman
                 update_sqlmap
                 update_metasploit
-                update_wapiti
-                update_miranda
-                update_umap
+                update_tool_dpkg bandit
+                update_tool_dpkg zaproxy
+                update_tool_dpkg wapiti
+                update_tool_dpkg miranda
+                update_tool_dpkg umap
+                update_tool_dpkg nmap
+                update_tool_dpkg aircrack-ng
+                update_tool_dpkg reaver
+                update_tool_dpkg ncrack
+                update_tool_dpkg john
+
+                cd "$tool_directory"
+
             # Display success message
                 echo -e "${GREEN}Updates checked successfully.${NC}"
                 break ;;
@@ -61,33 +45,28 @@ check_updates() {
                 ;;
         esac
     done
-    # If the user agrees to check for updates
-    # if [[ "$check_updates" == "y" ]]; then
-    #     # Log message indicating update check
-    #     log_message "Checking for updates..."
-    #     update_brakeman
-    #     update_bandit
-    #     update_owasp_zap
-    #     update_nikto
-    #     update_nmap
-    #     update_aircrack
-    #     update_reaver
-    #     update_ncrack
-    #     update_john
-    #     update_sqlmap
-    #     update_metasploit
-	#     update_wapiti
-    #     update_miranda
-    #     update_umap
-    #     # Display success message
-    #     echo -e "${GREEN}Updates checked successfully.${NC}"
-    # else
-    #     # Display message indicating skipping of updates check
-    #     echo -e "${YELLOW}Skipping updates check.${NC}"
-    # fi
+
 }
 
 
+update_tool_dpkg() {
+    local name="$1"
+    if ! command -v "$name" &> /dev/null; then
+        sudo apt install -y "$name" > /dev/null 2>&1
+        log_message "${name} installed"
+    else
+        current_version=$(dpkg-query -W -f='${Version}' "${name}" 2>/dev/null)
+        latest_version=$(apt-cache policy "$name" | grep 'Candidate:' | awk '{print $2}')
+
+        if [ "$current_version" != "$latest_version" ]; then
+            echo -e "${MAGENTA}Updating ${name}...${NC}"
+            sudo apt install -y "$name" > /dev/null 2>&1
+            log_message "${name} updated to version $latest_version"
+        else
+            log_message "${name} is up-to-date (version $current_version)"
+        fi
+    fi
+}
 
 # Function to update Brakeman (a security scanner for Ruby on Rails applications)
 update_brakeman() {
@@ -99,22 +78,7 @@ update_brakeman() {
     fi
 }
 
-# Function to update OWASP ZAP (a web application security scanner)
-update_owasp_zap() {
-    if ! command -v zaproxy &> /dev/null; then
-        sudo apt install -y zaproxy > /dev/null 2>&1
-        log_message "OWASP ZAP installed"
-    else
-        current_version=$(dpkg -s zaproxy | grep '^Version:' | awk '{print $2}')
-        latest_version=$(apt-cache policy zaproxy | grep 'Candidate:' | awk '{print $2}')
-        if [ "$current_version" != "$latest_version" ]; then
-            sudo apt install -y zaproxy > /dev/null 2>&1
-            log_message "OWASP ZAP updated to version $latest_version"
-        else
-            log_message "OWASP ZAP is up-to-date (version $current_version)"
-        fi
-    fi
-}
+
 
 # Function to update Nikto (a web server scanner)
 update_nikto() {
@@ -134,119 +98,6 @@ update_nikto() {
     fi
 }
 
-# Function to update Nmap (a network exploration and security auditing tool)
-update_nmap() {
-    if ! command -v nmap &> /dev/null; then
-        sudo apt install -y nmap > /dev/null 2>&1
-        log_message "Nmap installed"
-    else
-        # Check the installed version against the latest available version
-        current_version=$(nmap --version | head -n 1 | awk '{print $3}')
-        latest_version=$(apt-cache policy nmap | grep 'Candidate:' | awk '{print $2}')
-        if [ "$current_version" != "$latest_version" ]; then
-            sudo apt install -y nmap > /dev/null 2>&1
-            log_message "Nmap updated to version $latest_version"
-        else
-            log_message "Nmap is up-to-date (version $current_version)"
-        fi
-    fi
-}
-
-# Function to update aircrack-ng (a network exploration and security auditing tool)
-update_aircrack() {
-    if ! command -v aircrack-ng &> /dev/null; then
-        sudo apt install -y aircrack-ng > /dev/null 2>&1
-        log_message "Aircrack-ng installed"
-    else
-        # Check the installed version against the latest available version
-        current_version=$(aircrack-ng --version | head -n 1 | awk '{print $3}')
-        latest_version=$(apt-cache policy aircrack-ng | grep 'Candidate:' | awk '{print $2}')
-        if [ "$current_version" != "$latest_version" ]; then
-            sudo apt install -y aircrack-ng > /dev/null 2>&1
-            log_message "Aircrack-ng updated to version $latest_version"
-        else
-            log_message "Aircrack-ng is up-to-date (version $current_version)"
-        fi
-    fi
-}
-
-
-# Function to update Reaver (a network exploration and security auditing tool)
-update_reaver() {
-    if ! command -v reaver &> /dev/null; then
-        sudo apt install -y reaver > /dev/null 2>&1
-        log_message "Reaver installed"
-    else
-        # Check the installed version against the latest available version
-        current_version=$(reaver --version | head -n 1 | awk '{print $3}')
-        latest_version=$(apt-cache policy reaver | grep 'Candidate:' | awk '{print $2}')
-        if [ "$current_version" != "$latest_version" ]; then
-            sudo apt install -y reaver > /dev/null 2>&1
-            log_message "Reaver updated to version $latest_version"
-        else
-            log_message "Reaver is up-to-date (version $current_version)"
-        fi
-    fi
-}
-
-# Function to update Ncrack (a network exploration and security auditing tool)
-update_ncrack() {
-    if ! command -v ncrack &> /dev/null; then
-        sudo apt install -y ncrack > /dev/null 2>&1
-        log_message "Ncrack installed"
-    else
-        # Check the installed version against the latest available version
-        current_version=$(ncrack --version | head -n 1 | awk '{print $3}')
-        latest_version=$(apt-cache policy ncrack | grep 'Candidate:' | awk '{print $2}')
-        if [ "$current_version" != "$latest_version" ]; then
-            sudo apt install -y ncrack > /dev/null 2>&1
-            log_message "Ncrack updated to version $latest_version"
-        else
-            log_message "Ncrack is up-to-date (version $current_version)"
-        fi
-    fi
-}
-
-# Function to update John the Ripper (a password cracking tool)
-update_john() {
-    if ! command -v john &> /dev/null; then
-        echo -e "${MAGENTA}Installing John the Ripper...${NC}"
-        sudo apt install -y john > /dev/null 2>&1
-        log_message "John the Ripper installed"
-    else
-        # Get the current installed version using the package manager
-        current_version=$(dpkg-query -W -f='${Version}' john 2>/dev/null)
-        # Get the latest available version
-        latest_version=$(apt-cache policy john | grep 'Candidate:' | awk '{print $2}')
-        
-        if [ "$current_version" != "$latest_version" ]; then
-            echo -e "${MAGENTA}Updating John the Ripper...${NC}"
-            sudo apt install -y john > /dev/null 2>&1
-            log_message "John the Ripper updated to version $latest_version"
-        else
-            log_message "John the Ripper is up-to-date (version $current_version)"
-        fi
-    fi
-}
-
-# Function to update bandit
-update_bandit() {
-    if ! command -v bandit &> /dev/null; then
-        sudo apt install -y bandit > /dev/null 2>&1
-        log_message "Bandit installed"
-    else
-        current_version=$(dpkg-query -W -f='${Version}' bandit 2>/dev/null)
-        latest_version=$(apt-cache policy bandit | grep 'Candidate:' | awk '{print $2}')
-
-        if [ "$current_version" != "$latest_version" ]; then
-            echo -e "${MAGENTA}Updating Bandit...${NC}"
-            sudo apt install -y bandit > /dev/null 2>&1
-            log_message "Bandit updated to version $latest_version"
-        else
-            log_message "Bandit is up-to-date (version $current_version)"
-        fi
-    fi
-}
 
 # Function to update sqlmap
 update_sqlmap() {
@@ -296,115 +147,6 @@ update_metasploit() {
     fi
 }
 
-# Function to update Wapiti
-update_wapiti() {
-    if ! command -v wapiti &> /dev/null; then
-        sudo apt install -y wapiti > /dev/null 2>&1
-        log_message "Wapiti installed"
-    else
-        current_version=$(dpkg-query -W -f='${Version}' wapiti 2>/dev/null)
-        latest_version=$(apt-cache policy wapiti | grep 'Candidate:' | awk '{print $2}')
-
-        if [ "$current_version" != "$latest_version" ]; then
-            echo -e "${MAGENTA}Updating Wapiti...${NC}"
-            sudo apt install -y wapiti > /dev/null 2>&1
-            log_message "Wapiti updated to version $latest_version"
-        else
-            log_message "Wapiti is up-to-date (version $current_version)"
-        fi
-    fi
-}
-
-# Function to update Tshark (Wireshark CLI)
-update_tshark() {
-    if ! command -v tshark &> /dev/null; then
-        sudo apt install -y tshark > /dev/null 2>&1
-        log_message "Tshark installed"
-    else 
-        current_version=$(dpkg-query -W -f='${Version}' tshark 2>/dev/null)
-        latest_version=$(apt-cache policy tshark | grep 'Candidate:' | awk '{print $2}')
-
-        if [ "$current_version" != "$latest_version" ]; then
-            echo -e "${MAGENTA}Updating Tshark...${NC}"
-            sudo apt install -y tshark > /dev/null 2>&1
-            log_message "Tshark updated to version $latest_version"
-        else
-            log_message "Tshark is up-to-date (version $current_version)"
-        fi
-    fi
-}
-
-# Function to update Binwalk (Firmware analyzer)
-update_binwalk() {
-    if ! command -v binwalk &> /dev/null; then
-        sudo apt install -y binwalk > /dev/null 2>&1
-        log_message "Binwalk installed"
-    else 
-        current_version=$(dpkg-query -W -f='${Version}' binwalk 2>/dev/null)
-        latest_version=$(apt-cache policy binwalk | grep 'Candidate:' | awk '{print $2}')
-
-        if [ "$current_version" != "$latest_version" ]; then
-            echo -e "${MAGENTA}Updating Binwalk...${NC}"
-            sudo apt install -y binwalk > /dev/null 2>&1
-            log_message "Binwalk updated to version $latest_version"
-        else
-            log_message "Binwalk is up-to-date (version $current_version)"
-        fi
-    fi
-}
-
-# Function to update Hashcat (Fast password recovery, cracking)
-update_hashcat() {
-    if ! command -v hashcat &> /dev/null; then
-        sudo apt install -y hashcat > /dev/null 2>&1
-        log_message "Hashcat installed"
-    else 
-        current_version=$(dpkg-query -W -f='${Version}' hashcat 2>/dev/null)
-        latest_version=$(apt-cache policy hashcat | grep 'Candidate:' | awk '{print $2}')
-
-        if [ "$current_version" != "$latest_version" ]; then
-            echo -e "${MAGENTA}Updating Hashcat...${NC}"
-            sudo apt install -y hashcat > /dev/null 2>&1
-            log_message "Hashcat updated to version $latest_version"
-        else
-            log_message "Hashcat is up-to-date (version $current_version)"
-        fi
-    fi
-}
-
-# Function to update Miranda
-update_miranda() {
-    if ! command -v miranda &> /dev/null; then
-        sudo apt install -y miranda > /dev/null 2>&1
-        log_message "Miranda installed"
-    else
-        current_version=$(dpkg -s miranda | grep '^Version:' | awk '{print $2}')
-        latest_version=$(apt-cache policy miranda | grep 'Candidate:' | awk '{print $2}')
-        if [ "$current_version" != "$latest_version" ]; then
-            sudo apt install -y miranda > /dev/null 2>&1
-            log_message "Miranda updated to version $latest_version"
-        else
-            log_message "Miranda is up-to-date (version $current_version)"
-        fi
-    fi
-}
-
-# Function to update umap
-update_umap() {
-    if ! command -v umap &> /dev/null; then
-        sudo apt install -y umap > /dev/null 2>&1
-        log_message "Umap installed"
-    else
-        current_version=$(dpkg -s umap | grep '^Version:' | awk '{print $2}')
-        latest_version=$(apt-cache policy umap | grep 'Candidate:' | awk '{print $2}')
-        if [ "$current_version" != "$latest_version" ]; then
-            sudo apt install -y umap > /dev/null 2>&1
-            log_message "Umap updated to version $latest_version"
-        else
-            log_message "Umap is up-to-date (version $current_version)"
-        fi
-    fi
-}
 
 # Function to update bettercap
 update_bettercap() {
