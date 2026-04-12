@@ -48,7 +48,7 @@ display_main_menu() {
 
 display_mobile_security_tools_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
-    echo -e "${BYellow}║        Mobile Security Tools             ║${NC}"
+    echo -e "${BYellow}║        Mobile Security Tools               ║${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
     echo -e "${BCyan}1)${NC} ${White}MobSF: Mobile Security Framework${NC}"
     echo -e "${BCyan}2)${NC} ${White}Start Android Emulator with mitmproxy${NC}"
@@ -131,7 +131,7 @@ display_iot_security_tools_menu() {
     echo -e "${BCyan}11)${NC} ${White}Wifiphisher${NC}"
     echo -e "${BCyan}12)${NC} ${White}Wireshark${NC}"
     echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
-    echo -e "${BYellow}╚═══════════════════════════════════════════╝${NC}"
+    echo -e "${BYellow}╚══════════════════════════════════════════╝${NC}"
 }
 
 # Function to display Step by Step Guide menu
@@ -149,7 +149,7 @@ display_step_by_step_guide_menu() {
 # Function to display Automated Processes menu
 display_automated_processes_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
-    echo -e "${BYellow}║        Automated Processes               ║${NC}"
+    echo -e "${BYellow}║        Automated Processes                 ║${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
     echo -e "${BCyan}1)${NC} ${White}Reconnaissance${NC}"
     echo -e "${BCyan}2)${NC} ${White}Vulnerability Scanning${NC}"
