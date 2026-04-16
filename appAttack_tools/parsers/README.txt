@@ -84,8 +84,31 @@ Think of it like a detective's assistant who reads through a messy investigation
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+wapiti_parser.py
+This file is a parser for Wapiti - a tool that scans websites for security problems by acting like a hacker. Wapiti is like a digital burglar who tries to break into a website by testing all the ways a real hacker might attack.
 
+What makes Wapiti different?
+Unlike other scanners that just look for obvious problems, Wapiti actually tries to exploit (take advantage of) weaknesses to see if they're real. It tests for things like:
 
+    XSS (Cross-Site Scripting) - Can a hacker inject bad code into your website?
+
+    SQL Injection - Can a hacker trick your database?
+
+    File inclusion - Can a hacker force your website to show secret files?
+
+What this parser does:
+
+    Takes the messy output from a Wapiti scan
+
+    Finds the website that was scanned (the target URL)
+
+    Finds each type of vulnerability tested (like "XSS vulnerabilities" or "SQL Injection vulnerabilities")
+
+    Extracts the specific problems found under each type
+
+    Creates a question asking an AI to explain what the vulnerabilities mean and how to fix them
+
+Think of it like a medical report translator - Wapiti is like a full body scan that finds "here's a problem with your heart, here's a problem with your lungs," and this parser organizes those findings and asks a doctor (the AI) to explain them in plain English.
 
 
 
