@@ -42,3 +42,23 @@ This specific plugin:
 
 -------------------------------------------------------------------------------------------------------------------
 
+sample_plugin.sh
+This file is a blank template or starter kit for creating new plugins.
+
+Think of it like an empty coloring book page that has the outlines already drawn. You don't need to start from scratch - just fill in the blanks with your own colors (code).
+
+This template shows you:
+
+    What every plugin needs to have (the required parts)
+
+    Where to put your own code
+
+    How to name your plugin
+
+If you want to add a new security tool to AppAttack, you copy this file, rename it, and then fill in the empty space with your tool's specific commands.
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
