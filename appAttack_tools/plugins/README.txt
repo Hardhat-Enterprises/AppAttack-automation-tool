@@ -18,3 +18,27 @@ This plugin automates that process. It:
 
 -------------------------------------------------------------------------------------------------------------------
 
+nmap_plugin.sh
+This plugin runs a tool called Nmap (short for "Network Mapper"). Nmap is like a scanner for computers on a network - it tells you what computers are out there, what doors (called "ports") are open, and what services are running.
+
+Think of it like walking down a street and checking every house to see:
+
+    Which houses exist (what computers are on the network)
+
+    Which doors are unlocked (what ports are open)
+
+    What each house is used for (what service is running - web server, email, etc.)
+
+This specific plugin:
+
+    Takes a target computer's address (like 192.168.1.1)
+
+    Optionally takes a specific door/port number to check (like port 80 for websites)
+
+    Runs Nmap to scan that computer
+
+    Sends the results to a separate tool that formats them neatly (in JSON)
+
+
+-------------------------------------------------------------------------------------------------------------------
+
