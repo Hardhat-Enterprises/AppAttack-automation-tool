@@ -1,22 +1,17 @@
-This Read Me gives you an understanding of what the plugins in this folder do:
+This Read Me gives you a better understanding of what each file in the plugins folder does:
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-------------------------------------------------------------------------------------------
+1. automated_reporting_plugin.sh
+    - When the "Penetration Testing Team" runs security scans using the AppAttack toolkit. Each scan result gets saved in a different text file, scattered around your computer,        which can be confusing and time-consuming because now you need to compile all those results into a single, readable report to show your team or keep for your records.
 
-automated_reporting_plugin.sh
-- When the penetration testing team runs security scans using the AppAttack toolkit.  Each scan saved its results in a different text file, scattered around your computer. Now you need to compile all those results into a single, readable report to show your team or keep for your records.
-
-This plugin automates that process. It:
-
-    Finds all scan result files (any file ending with _plugin_scan.txt or named code_review_report.txt)
-
-    Creates an HTML webpage that contains all those scan results in one place
-
-    Saves the webpage with a timestamp in the filename (e.g., scan_report_20260116_143022.html)
-
-    Organizes the report with headings so you can easily see which results came from which scan.
+    - This plugin automates that process. It:
+        a.) Finds all scan result files (any file ending with _plugin_scan.txt or named code_review_report.txt).
+        b.) Creates a HTML file that contains all those scan results in one place.
+        c.) Saves the webpage with a timestamp in the filename (e.g., scan_report_20260116_143022.html).
+        d.) Organizes the report with headings so you can easily see which results came from which scan.
 
 
--------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 nmap_plugin.sh
 This plugin runs a tool called Nmap (short for "Network Mapper"). Nmap is like a scanner for computers on a network - it tells you what computers are out there, what doors (called "ports") are open, and what services are running.
