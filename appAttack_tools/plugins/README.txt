@@ -10,32 +10,18 @@ This Read Me gives you a better understanding of what each file in the plugins f
         c.) Saves the webpage with a timestamp in the filename (e.g., scan_report_20260116_143022.html).
         d.) Organizes the report with headings so you can easily see which results came from which scan.
 
-
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-nmap_plugin.sh
-This plugin runs a tool called Nmap (short for "Network Mapper"). Nmap is like a scanner for computers on a network - it tells you what computers are out there, what doors (called "ports") are open, and what services are running.
+2. nmap_plugin.sh
+    - This plugin runs a tool called Nmap (short for "Network Mapper"). Nmap is like a scanner for computers on a network, it tells you what computers are out there, what doors        (called "ports") are open, and what services are running.
 
-Think of it like walking down a street and checking every house to see:
+    - This specific plugin:
+      a.) Takes a target computer's address (like 192.168.1.1).
+      b.) Optionally takes a specific door/port number to check (like port 80 for websites).
+      c.) Runs Nmap to scan that computer.
+      d.) Sends the results to a separate tool that formats them neatly (in JSON)
 
-    Which houses exist (what computers are on the network)
-
-    Which doors are unlocked (what ports are open)
-
-    What each house is used for (what service is running - web server, email, etc.)
-
-This specific plugin:
-
-    Takes a target computer's address (like 192.168.1.1)
-
-    Optionally takes a specific door/port number to check (like port 80 for websites)
-
-    Runs Nmap to scan that computer
-
-    Sends the results to a separate tool that formats them neatly (in JSON)
-
-
--------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 sample_plugin.sh
 This file is a blank template or starter kit for creating new plugins.
