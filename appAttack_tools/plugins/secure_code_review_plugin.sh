@@ -1,9 +1,8 @@
 #!/bin/bash
 # Secure Code Review Plugin for AppAttack toolkit
-# 
+
 # WHAT THIS DOES:
-# Checks your code for security problems using three different tools.
-# Think of it as hiring three safety inspectors to look at your code.
+# Checks your code for security problems using three different tools. Think of it as hiring three safety inspectors to look at your code.
 # They each write a report, and this plugin combines them into one.
 
 # This is just the name of this tool
