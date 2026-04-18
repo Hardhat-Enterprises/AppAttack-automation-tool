@@ -2,9 +2,11 @@ import sys
 import json
 import re
 
-# --------------------------------------------------------------
+# WHAT THIS FILE DOES:
+# Cleans up John the Ripper's output and turns it into a question for an AI to explain what password was found and why it's weak.
+
+
 # HELPER FUNCTION #1: Read the raw output file
-# --------------------------------------------------------------
 def load_output(file_path):
     """Open a file and read all its lines"""
     try:
@@ -13,9 +15,8 @@ def load_output(file_path):
     except Exception:
         return []  # If file doesn't exist or can't be read, return empty list
 
-# --------------------------------------------------------------
+
 # HELPER FUNCTION #2: Clean up the messy output
-# --------------------------------------------------------------
 def clean_output(lines):
     """Remove useless lines from John the Ripper's output"""
     filtered = []
@@ -42,15 +43,14 @@ def clean_output(lines):
         if "0 left" in line.lower():
             continue
         
-        # If we made it here, this line is important - keep it
+        # If we made it here, this line is important, keep it
         filtered.append(line)
     
     # Join all the kept lines together with line breaks in between
     return "\n".join(filtered)
 
-# --------------------------------------------------------------
+
 # MAIN FUNCTION: Put it all together
-# --------------------------------------------------------------
 def main():
     # Check if user gave us a file to read
     # sys.argv is a list of everything typed on the command line
@@ -58,7 +58,7 @@ def main():
     # sys.argv[0] = "john_parser.py" (the script name)
     # sys.argv[1] = "results.txt" (the first argument)
     if len(sys.argv) < 2:
-        # No file provided - print an error message in JSON format
+        # No file provided, print an error message in JSON format
         print(json.dumps({"prompt": "No input file provided."}))
         return
     
@@ -79,9 +79,8 @@ def main():
     # JSON is just a way to organize data that computers understand
     print(json.dumps({"prompt": prompt}))
 
-# --------------------------------------------------------------
+
 # Run the main function only if this file is run directly
 # (not if it's being imported by another file)
-# --------------------------------------------------------------
 if __name__ == "__main__":
     main()
