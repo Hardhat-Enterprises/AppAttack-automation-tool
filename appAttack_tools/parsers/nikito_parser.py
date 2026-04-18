@@ -2,19 +2,20 @@ import sys
 import re
 import json
 
-# --------------------------------------------------------------
-# FUNCTION #1: Pull out the important information from Nikto's output
-# --------------------------------------------------------------
+# WHAT THIS FILE DOES:
+# Takes Nikto's messy scan output, finds the website name and all problems, then creates a question for an AI to explain everything in simple English.
+
+# FUNCTION #1: Pull out the important information from Nikto's output.
 def parse_nikto_output(text):
     """Scan through Nikto's output and grab the host name and all findings"""
     
-    findings = []      # This will hold all the problems/observations
-    host = ""          # This will hold the website address or IP
+    findings = []      # This will hold all the problems/observations.
+    host = ""          # This will hold the website address or IP.
     
-    # Split the text into individual lines
+    # Split the text into individual lines.
     lines = text.splitlines()
     
-    # Look at each line one by one
+    # Look at each line one by one.
     for line in lines:
         
         # --- Find the website address (host) ---
@@ -41,9 +42,8 @@ def parse_nikto_output(text):
     }
     return parsed
 
-# --------------------------------------------------------------
+
 # FUNCTION #2: Turn the findings into a question for an AI
-# --------------------------------------------------------------
 def generate_prompt(data):
     """Create a prompt that asks an AI to explain the scan results"""
     
@@ -54,10 +54,10 @@ def generate_prompt(data):
     
     # Check if any problems were found
     if not data["findings"]:
-        # No problems found - say something positive but cautious
+        # No problems found, say something positive but cautious
         prompt += "No obvious problems or vulnerabilities were found on this web server. That's a good sign, but it's always smart to keep systems updated and monitored.\n"
     else:
-        # Problems were found - list them out
+        # Problems were found, list them out
         prompt += "The scan found the following issues or observations:\n\n"
         
         for finding in data["findings"]:
@@ -71,9 +71,8 @@ def generate_prompt(data):
     
     return prompt
 
-# --------------------------------------------------------------
+
 # MAIN FUNCTION: Put it all together
-# --------------------------------------------------------------
 if __name__ == "__main__":
     # Check if the user provided a file to read
     if len(sys.argv) < 2:
