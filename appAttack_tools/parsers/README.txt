@@ -1,3 +1,6 @@
+This Read Me gives you a better understanding of what each file in the parsers folder does:
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 john_parser.py
 This file is a parser - a helper that takes messy output from a tool and cleans it up so it's ready to be sent to an AI for analysis.
 
