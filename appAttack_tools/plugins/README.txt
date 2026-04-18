@@ -35,23 +35,15 @@ If you want to add a new security tool to AppAttack, you copy this file, rename 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-secure_code_review_plugin.sh
-This plugin checks your code for security problems - like having a detective read through your code to find weak spots.
+4. secure_code_review_plugin.sh
+    - This plugin checks your code for security problems, like having a detective read through your code to find weak spots. Think of it like three different safety inspectors         looking at the same building:
 
-Think of it like three different safety inspectors looking at the same building:
+      a.) Bandit: Checks Python code for security issues (like finding unlocked doors).
+      b.) Brakeman: Checks Ruby on Rails code for problems (like finding weak windows).
+      c.) Snyk: Checks for known security holes in the outside libraries your code uses (like making sure your locks aren't a brand that burglars know how to pick).
 
-    Bandit - Checks Python code for security issues (like finding unlocked doors)
-
-    Brakeman - Checks Ruby on Rails code for problems (like finding weak windows)
-
-    Snyk - Checks for known security holes in the outside libraries your code uses (like making sure your locks aren't a brand that burglars know how to pick)
-
-What this plugin actually does:
-
-    Asks you for the folder where your code lives
-
-    Runs all three security checkers on that folder
-
-    Collects all their findings into ONE report file
-
-    Saves that report on your computer so you can read it later
+    - What this plugin actually does:
+      a.) Asks you for the folder where your code lives.
+      b.) Runs all three security checkers on that folder.
+      c.) Collects all their findings into ONE report file.
+      d.) Saves that report on your computer so you can read it later.
