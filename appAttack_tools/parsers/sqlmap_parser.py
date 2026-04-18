@@ -2,9 +2,12 @@ import sys
 import re
 import json
 
-# --------------------------------------------------------------
+# WHAT THIS FILE DOES:
+# Takes SQLMap's messy output (from testing websites for database holes), finds the target website and all important messages,
+# then creates a question for an AI to explain what the risks are and how to fix them.
+
+
 # FUNCTION #1: Pull out the important information from SQLMap's output
-# --------------------------------------------------------------
 def parse_sqlmap_output(text):
     """Scan through SQLMap's output and grab the target website and all important findings"""
     
@@ -48,9 +51,8 @@ def parse_sqlmap_output(text):
     }
     return parsed
 
-# --------------------------------------------------------------
+
 # FUNCTION #2: Turn the findings into a question for an AI
-# --------------------------------------------------------------
 def generate_prompt(data):
     """Create a prompt that asks an AI to explain the scan results"""
     
@@ -61,13 +63,13 @@ def generate_prompt(data):
     
     # Check if any findings were found
     if not data["findings"]:
-        # No problems found - good news but stay cautious
+        # No problems found, good news but stay cautious
         prompt += (
             "No clear signs of SQL injection or database vulnerabilities were found. "
             "That's a good sign, but it's important to stay cautious and regularly test your web apps for weaknesses.\n"
         )
     else:
-        # Problems were found - list them out
+        # Problems were found, list them out
         prompt += "The scan uncovered the following important observations or potential issues:\n\n"
         
         for finding in data["findings"]:
@@ -81,9 +83,8 @@ def generate_prompt(data):
     
     return prompt
 
-# --------------------------------------------------------------
+
 # MAIN FUNCTION: Put it all together
-# --------------------------------------------------------------
 if __name__ == "__main__":
     # Check if the user provided a file to read
     if len(sys.argv) < 2:
