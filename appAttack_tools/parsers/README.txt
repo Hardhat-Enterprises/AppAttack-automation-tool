@@ -19,22 +19,18 @@ This Read Me gives you a better understanding of what each file in the parsers f
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 2. nikito_parser.py
-     - This file is a parser for Nikto, a tool that scans websites for security problems. Nikto is like a security guard who walks around a website checking for unlocked doors, weak spots, and things that are set up wrong.
+     - This file is a parser for Nikto, a tool that scans websites for security problems. Nikto is like a security guard who walks around a website checking for unlocked doors,         weak spots, and things that are set up wrong.
 
-What this parser does:
+     - What this parser does:
+          a.) Takes the messy output from a Nikto scan.
+          b.) Finds the important parts, specifically, lines that start with + (these are the findings/problems).
+          c.) Figures out which website/server was scanned (the "host" or IP address).
+          d.) Creates a question asking an AI to explain all the findings in plain, beginner-friendly English.
 
-    Takes the messy output from a Nikto scan
-
-    Finds the important parts - specifically, lines that start with + (these are the findings/problems)
-
-    Figures out which website/server was scanned (the "host" or IP address)
-
-    Creates a question asking an AI to explain all the findings in plain, beginner-friendly English
-
-Think of it like a translator who takes a technical security report full of jargon and turns it into a simple conversation: "Here's what the scan found on your website... here's what each problem means... and here's how to fix it."
+    - Think of it like a translator who takes a technical security report full of jargon and turns it into a simple conversation: "Here's what the scan found on your website...
+      here's what each problem means... and here's how to fix it."
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 nmap_parser.py
 This file is a parser for Nmap - a tool that scans computers on a network to see what "doors" (called ports) are open. Nmap is like a digital door checker that walks down a street and tries every door on every house to see which ones are unlocked.
