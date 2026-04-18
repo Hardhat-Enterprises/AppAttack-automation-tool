@@ -32,21 +32,17 @@ This Read Me gives you a better understanding of what each file in the parsers f
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-nmap_parser.py
-This file is a parser for Nmap - a tool that scans computers on a network to see what "doors" (called ports) are open. Nmap is like a digital door checker that walks down a street and tries every door on every house to see which ones are unlocked.
+3. nmap_parser.py
+    - This file is a parser for Nmap, a tool that scans computers on a network to see what "doors" (called ports) are open. 
 
-What this parser does:
+    - What this parser does:
+        a.) Takes the messy output from an Nmap scan.
+        b.) Finds the computer that was scanned (IP address or hostname).
+        c.) Finds all the open doors (ports) and what service is running behind each one.
+        d.) Creates a question asking an AI to explain in plain English what these open ports mean and how to stay safe.
 
-    Takes the messy output from an Nmap scan
-
-    Finds the computer that was scanned (IP address or hostname)
-
-    Finds all the open doors (ports) and what service is running behind each one
-
-    Creates a question asking an AI to explain in plain English what these open ports mean and how to stay safe
-
-Think of it like a security translator that takes a technical network report (full of jargon like "port 22/tcp open ssh") and turns it into a simple conversation: "Hey, your computer has door #22 open, and behind it is a service called SSH. Here's what that means and whether you should worry about it."
-
+    - Think of it like a security translator that takes a technical network report (full of jargon like "port 22/tcp open ssh") and turns it into a simple conversation: "Hey,
+      your computer has door #22 open, and behind it is a service called SSH. Here's what that means and whether you should worry about it."
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
