@@ -23,24 +23,17 @@ This Read Me gives you a better understanding of what each file in the plugins f
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-sample_plugin.sh
-This file is a blank template or starter kit for creating new plugins.
+3. sample_plugin.sh
+    - This file is a blank template or starter kit for creating new plugins. You don't need to start from scratch, just fill in the blanks with your own colors (code).
 
-Think of it like an empty coloring book page that has the outlines already drawn. You don't need to start from scratch - just fill in the blanks with your own colors (code).
-
-This template shows you:
-
-    What every plugin needs to have (the required parts)
-
-    Where to put your own code
-
-    How to name your plugin
+    - This template shows you:
+      a.) What every plugin needs to have (the required parts).
+      b.) Where to put your own code.
+      c.) How to name your plugin.
 
 If you want to add a new security tool to AppAttack, you copy this file, rename it, and then fill in the empty space with your tool's specific commands.
 
-
-
------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 secure_code_review_plugin.sh
 This plugin checks your code for security problems - like having a detective read through your code to find weak spots.
