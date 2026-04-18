@@ -46,30 +46,18 @@ This Read Me gives you a better understanding of what each file in the parsers f
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+4. sqlmap_parser.py 
+    - This file is a parser for SQLMap, a tool that tries to hack into websites by tricking their databases. SQLMap is like a digital lock picker that tests whether a website's  
+      database has a dangerous weakness called "SQL injection."
 
-sqlmap_parser.py
-This file is a parser for SQLMap - a tool that tries to hack into websites by tricking their databases. SQLMap is like a digital lock picker that tests whether a website's database has a dangerous weakness called "SQL injection."
+    - What this parser does:
+        a.) Takes the messy output from an SQLMap scan.
+        b.) Finds the website that was tested (the target URL)
+        c.) Extracts all the important messages (INFO, WARNING, CRITICAL, PAYLOAD)
+        d.) Removes duplicate messages (so you don't see the same thing twice)
+        e.) Creates a question asking an AI to explain what the findings mean in plain English
 
-What is SQL injection?
-Imagine a website has a login form that asks for your username. A hacker might type something sneaky like ' OR '1'='1 instead of a real name. If the website is poorly built, that sneaky text can trick the database into giving away all its secrets (passwords, credit cards, etc.).
-
-What this parser does:
-
-    Takes the messy output from an SQLMap scan
-
-    Finds the website that was tested (the target URL)
-
-    Extracts all the important messages (INFO, WARNING, CRITICAL, PAYLOAD)
-
-    Removes duplicate messages (so you don't see the same thing twice)
-
-    Creates a question asking an AI to explain what the findings mean in plain English
-
-Think of it like a detective's assistant who reads through a messy investigation report, highlights the important clues, removes the duplicates, and then asks an expert to explain what those clues mean to someone who isn't a detective.
-
-
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 wapiti_parser.py
 This file is a parser for Wapiti - a tool that scans websites for security problems by acting like a hacker. Wapiti is like a digital burglar who tries to break into a website by testing all the ways a real hacker might attack.
