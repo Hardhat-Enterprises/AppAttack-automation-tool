@@ -43,6 +43,9 @@ install_function nikto
 install_function legion
 install_function wapiti
 install_function zaproxy
-
-
-
+install_hydra
+install_feroxbuster
+install_theharvester
+install_enum4linux
+install_whatweb
+install_amass
