@@ -561,6 +561,125 @@ install_ollama(){
     fi
 }
 
+# Function to install Hydra (network login cracker)
+install_hydra() {
+    if command -v hydra &> /dev/null; then
+        echo -e "${GREEN}Hydra is already installed.${NC}"
+        return
+    fi
+    echo -e "${CYAN}Installing Hydra...${NC}"
+    sudo apt update && sudo apt install -y hydra
+    if command -v hydra &> /dev/null; then
+        echo -e "${GREEN}Hydra installed successfully!${NC}"
+        hydra -h 2>&1 | head -3
+    else
+        echo -e "${RED}Failed to install Hydra.${NC}"
+    fi
+}
+
+# Function to install Feroxbuster (fast content discovery tool)
+install_feroxbuster() {
+    if command -v feroxbuster &> /dev/null; then
+        echo -e "${GREEN}Feroxbuster is already installed.${NC}"
+        return
+    fi
+    echo -e "${CYAN}Installing Feroxbuster...${NC}"
+    curl -sL https://raw.githubusercontent.com/epi052/feroxbuster/main/install-nix.sh | sudo bash -s /usr/local/bin
+    if command -v feroxbuster &> /dev/null; then
+        echo -e "${GREEN}Feroxbuster installed successfully!${NC}"
+        feroxbuster --version
+    else
+        # Fallback: try cargo install
+        echo -e "${YELLOW}Trying cargo install as fallback...${NC}"
+        if ! command -v cargo &> /dev/null; then
+            sudo apt install -y cargo
+        fi
+        cargo install feroxbuster
+        if [ -f "$HOME/.cargo/bin/feroxbuster" ]; then
+            sudo ln -sf "$HOME/.cargo/bin/feroxbuster" /usr/local/bin/feroxbuster
+            echo -e "${GREEN}Feroxbuster installed via cargo!${NC}"
+        else
+            echo -e "${RED}Failed to install Feroxbuster.${NC}"
+        fi
+    fi
+}
+
+# Function to install theHarvester (OSINT email/domain harvesting tool)
+install_theharvester() {
+    if command -v theHarvester &> /dev/null || [ -f /usr/bin/theHarvester ]; then
+        echo -e "${GREEN}theHarvester is already installed.${NC}"
+        return
+    fi
+    echo -e "${CYAN}Installing theHarvester...${NC}"
+    sudo apt update && sudo apt install -y theharvester
+    if command -v theHarvester &> /dev/null; then
+        echo -e "${GREEN}theHarvester installed successfully!${NC}"
+    else
+        # Fallback: pip install
+        echo -e "${YELLOW}Trying pip install as fallback...${NC}"
+        pip3 install theHarvester --break-system-packages
+        if command -v theHarvester &> /dev/null; then
+            echo -e "${GREEN}theHarvester installed via pip!${NC}"
+        else
+            echo -e "${RED}Failed to install theHarvester.${NC}"
+        fi
+    fi
+}
+
+# Function to install enum4linux (SMB/Samba enumeration tool)
+install_enum4linux() {
+    if command -v enum4linux &> /dev/null; then
+        echo -e "${GREEN}enum4linux is already installed.${NC}"
+        return
+    fi
+    echo -e "${CYAN}Installing enum4linux...${NC}"
+    sudo apt update && sudo apt install -y enum4linux
+    if command -v enum4linux &> /dev/null; then
+        echo -e "${GREEN}enum4linux installed successfully!${NC}"
+    else
+        echo -e "${RED}Failed to install enum4linux.${NC}"
+    fi
+}
+
+# Function to install WhatWeb (web technology fingerprinting tool)
+install_whatweb() {
+    if command -v whatweb &> /dev/null; then
+        echo -e "${GREEN}WhatWeb is already installed.${NC}"
+        return
+    fi
+    echo -e "${CYAN}Installing WhatWeb...${NC}"
+    sudo apt update && sudo apt install -y whatweb
+    if command -v whatweb &> /dev/null; then
+        echo -e "${GREEN}WhatWeb installed successfully!${NC}"
+        whatweb --version
+    else
+        echo -e "${RED}Failed to install WhatWeb.${NC}"
+    fi
+}
+
+# Function to install Amass (network mapping and attack surface discovery)
+install_amass() {
+    if command -v amass &> /dev/null; then
+        echo -e "${GREEN}Amass is already installed.${NC}"
+        return
+    fi
+    echo -e "${CYAN}Installing Amass...${NC}"
+    sudo apt update && sudo apt install -y amass
+    if command -v amass &> /dev/null; then
+        echo -e "${GREEN}Amass installed successfully!${NC}"
+        amass -version
+    else
+        # Fallback: snap install
+        echo -e "${YELLOW}Trying snap install as fallback...${NC}"
+        sudo snap install amass
+        if command -v amass &> /dev/null; then
+            echo -e "${GREEN}Amass installed via snap!${NC}"
+        else
+            echo -e "${RED}Failed to install Amass.${NC}"
+        fi
+    fi
+}
+
 case $1 in 
     gobuster)   install_function gobuster ;;
     trivy)   install_trivy ;;
@@ -593,6 +712,12 @@ case $1 in
     dredd)   install_dredd ;;
     subfinder)   install_subfinder ;;
     ollama)   install_ollama ;;
+    hydra)   install_hydra ;;
+    feroxbuster)   install_feroxbuster ;;
+    theharvester)   install_theharvester ;;
+    enum4linux)   install_enum4linux ;;
+    whatweb)   install_whatweb ;;
+    amass)   install_amass ;;
     *)
     ;;
 esac
