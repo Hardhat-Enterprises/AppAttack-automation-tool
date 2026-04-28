@@ -92,7 +92,13 @@ display_penetration_testing_tools_menu() {
     echo -e "${BCyan}8)${NC} ${BWhite}Wapiti${NC}: Web Application Vulnerability Scanner"
     echo -e "${BCyan}9)${NC} ${BWhite}Gobuster${NC}: Directory and DNS brute-forcing tool"
 	echo -e "${BCyan}10)${NC} ${BWhite}Subfinder${NC}: Subdomain enumeration"
-    echo -e "${BCyan}11)${NC} ${BWhite}Automated Scan${NC}: Run an automated vulnerability scan"
+    echo -e "${BCyan}11)${NC} ${BWhite}Hydra${NC}: Network login brute-force cracker"
+    echo -e "${BCyan}12)${NC} ${BWhite}Feroxbuster${NC}: Fast web content and directory discovery"
+    echo -e "${BCyan}13)${NC} ${BWhite}theHarvester${NC}: OSINT email and subdomain harvesting"
+    echo -e "${BCyan}14)${NC} ${BWhite}enum4linux${NC}: SMB/Samba enumeration tool"
+    echo -e "${BCyan}15)${NC} ${BWhite}WhatWeb${NC}: Web technology fingerprinting"
+    echo -e "${BCyan}16)${NC} ${BWhite}Amass${NC}: Network mapping and attack surface discovery"
+    echo -e "${BCyan}17)${NC} ${BWhite}Automated Scan${NC}: Run an automated vulnerability scan"
     echo -e "${BCyan}0)${NC} ${BWhite}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
@@ -230,8 +236,14 @@ handle_penetration_testing_tools() {
             7) run_metasploit "$OUTPUT_DIR" ;;
 	        8) run_wapiti "$OUTPUT_DIR" ;;
             9) run_gobuster "$OUTPUT_DIR" ;;
-			10) run_subfinder "$OUTPUT_DIR" ;;
-            11) run_automated_scan ;;
+		    10) run_subfinder "$OUTPUT_DIR" ;;
+            11) run_hydra "$OUTPUT_DIR" ;;
+            12) run_feroxbuster "$OUTPUT_DIR" ;;
+            13) run_theharvester "$OUTPUT_DIR" ;;
+            14) run_enum4linux "$OUTPUT_DIR" ;;
+            15) run_whatweb "$OUTPUT_DIR" ;;
+            16) run_amass "$OUTPUT_DIR" ;;
+            17) run_automated_scan ;;
             0) break ;;
             *) echo -e "${RED}Invalid choice, please try again.${NC}" ;;
         esac
