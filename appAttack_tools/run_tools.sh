@@ -979,3 +979,181 @@ run_dredd() {
     generate_ai_insights "$dredd_output" "$output_to_file" "$output_file" "dredd"
     echo -e "${GREEN}Dredd API Security Testing completed.${NC}"
 }
+
+# Function to run Hydra (network login brute-force)
+run_hydra() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/hydra_output.txt"
+
+    echo -e "${CYAN}Running Hydra - Network Login Cracker...${NC}"
+
+    read -p "Enter the target IP or hostname: " target
+    read -p "Enter the service/protocol (e.g., ssh, ftp, http-get): " service
+    read -p "Enter the username or username list (e.g., admin or /path/to/users.txt): " userval
+    read -p "Enter the password list path (e.g., /usr/share/wordlists/rockyou.txt): " passlist
+
+    if [[ -z "$target" || -z "$service" || -z "$userval" || -z "$passlist" ]]; then
+        echo -e "${RED}All fields are required. Exiting.${NC}"
+        return
+    fi
+
+    local user_flag="-l $userval"
+    [[ "$userval" == /* ]] && user_flag="-L $userval"
+
+    echo -e "${CYAN}Starting Hydra attack on $target ($service)...${NC}"
+
+    if [[ "$output_to_file" == "y" ]]; then
+        hydra_output=$(hydra $user_flag -P "$passlist" "$target" "$service" -o "$output_file" 2>&1)
+        echo "$hydra_output"
+    else
+        hydra_output=$(hydra $user_flag -P "$passlist" "$target" "$service" 2>&1)
+        echo "$hydra_output"
+    fi
+
+    generate_ai_insights "$hydra_output" "$output_to_file" "$output_file" "hydra"
+    echo -e "${GREEN}Hydra scan completed.${NC}"
+}
+
+# Function to run Feroxbuster (web content discovery)
+run_feroxbuster() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/feroxbuster_output.txt"
+
+    echo -e "${CYAN}Running Feroxbuster - Web Content Discovery...${NC}"
+
+    read -p "Enter the target URL (e.g., http://example.com): " target_url
+    read -p "Enter wordlist path (leave blank for default): " wordlist
+
+    if [[ -z "$target_url" ]]; then
+        echo -e "${RED}Target URL is required. Exiting.${NC}"
+        return
+    fi
+
+    local wl_flag=""
+    [[ -n "$wordlist" ]] && wl_flag="-w $wordlist"
+
+    echo -e "${CYAN}Starting Feroxbuster scan on $target_url...${NC}"
+
+    if [[ "$output_to_file" == "y" ]]; then
+        feroxbuster_output=$(feroxbuster -u "$target_url" $wl_flag -o "$output_file" 2>&1)
+        echo "$feroxbuster_output"
+    else
+        feroxbuster_output=$(feroxbuster -u "$target_url" $wl_flag 2>&1)
+        echo "$feroxbuster_output"
+    fi
+
+    generate_ai_insights "$feroxbuster_output" "$output_to_file" "$output_file" "feroxbuster"
+    echo -e "${GREEN}Feroxbuster scan completed.${NC}"
+}
+
+# Function to run theHarvester (OSINT email/subdomain harvesting)
+run_theharvester() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/theharvester_output.txt"
+
+    echo -e "${CYAN}Running theHarvester - OSINT Harvesting Tool...${NC}"
+
+    read -p "Enter the target domain (e.g., example.com): " domain
+    read -p "Enter the data source (e.g., google, bing, linkedin, all): " source
+
+    if [[ -z "$domain" ]]; then
+        echo -e "${RED}Domain is required. Exiting.${NC}"
+        return
+    fi
+
+    [[ -z "$source" ]] && source="google"
+
+    echo -e "${CYAN}Harvesting data for $domain using $source...${NC}"
+
+    if [[ "$output_to_file" == "y" ]]; then
+        harvester_output=$(theHarvester -d "$domain" -b "$source" 2>&1 | tee "$output_file")
+    else
+        harvester_output=$(theHarvester -d "$domain" -b "$source" 2>&1)
+        echo "$harvester_output"
+    fi
+
+    generate_ai_insights "$harvester_output" "$output_to_file" "$output_file" "theHarvester"
+    echo -e "${GREEN}theHarvester scan completed.${NC}"
+}
+
+# Function to run enum4linux (SMB/Samba enumeration)
+run_enum4linux() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/enum4linux_output.txt"
+
+    echo -e "${CYAN}Running enum4linux - SMB/Samba Enumeration...${NC}"
+
+    read -p "Enter the target IP address: " target
+
+    if [[ -z "$target" ]]; then
+        echo -e "${RED}Target IP is required. Exiting.${NC}"
+        return
+    fi
+
+    echo -e "${CYAN}Enumerating SMB shares and users on $target...${NC}"
+
+    if [[ "$output_to_file" == "y" ]]; then
+        enum4linux_output=$(enum4linux -a "$target" 2>&1 | tee "$output_file")
+    else
+        enum4linux_output=$(enum4linux -a "$target" 2>&1)
+        echo "$enum4linux_output"
+    fi
+
+    generate_ai_insights "$enum4linux_output" "$output_to_file" "$output_file" "enum4linux"
+    echo -e "${GREEN}enum4linux scan completed.${NC}"
+}
+
+# Function to run WhatWeb (web technology fingerprinting)
+run_whatweb() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/whatweb_output.txt"
+
+    echo -e "${CYAN}Running WhatWeb - Web Technology Fingerprinting...${NC}"
+
+    read -p "Enter the target URL (e.g., http://example.com): " target_url
+
+    if [[ -z "$target_url" ]]; then
+        echo -e "${RED}Target URL is required. Exiting.${NC}"
+        return
+    fi
+
+    echo -e "${CYAN}Fingerprinting $target_url...${NC}"
+
+    if [[ "$output_to_file" == "y" ]]; then
+        whatweb_output=$(whatweb -v "$target_url" 2>&1 | tee "$output_file")
+    else
+        whatweb_output=$(whatweb -v "$target_url" 2>&1)
+        echo "$whatweb_output"
+    fi
+
+    generate_ai_insights "$whatweb_output" "$output_to_file" "$output_file" "whatweb"
+    echo -e "${GREEN}WhatWeb scan completed.${NC}"
+}
+
+# Function to run Amass (attack surface and subdomain discovery)
+run_amass() {
+    OUTPUT_DIR=$1
+    output_file="${OUTPUT_DIR}/amass_output.txt"
+
+    echo -e "${CYAN}Running Amass - Attack Surface Discovery...${NC}"
+
+    read -p "Enter the target domain (e.g., example.com): " domain
+
+    if [[ -z "$domain" ]]; then
+        echo -e "${RED}Domain is required. Exiting.${NC}"
+        return
+    fi
+
+    echo -e "${CYAN}Mapping attack surface for $domain...${NC}"
+
+    if [[ "$output_to_file" == "y" ]]; then
+        amass_output=$(amass enum -d "$domain" -o "$output_file" 2>&1)
+        echo "$amass_output"
+    else
+        amass_output=$(amass enum -d "$domain" 2>&1)
+        echo "$amass_output"
+    fi
+
+    generate_ai_insights "$amass_output" "$output_to_file" "$output_file" "amass"
+    echo -e "${GREEN}Amass scan completed.${NC}"
+}
