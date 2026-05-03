@@ -28,7 +28,7 @@ install_go() {
         return
     fi
     git clone https://github.com/udhos/update-golang &> /dev/null
-    cd update-golang  || exit 1
+    cd update-golang  || return 1
     # Run the update script, suppress all output
     {
         sudo ./update-golang.sh &> /dev/null
@@ -119,7 +119,7 @@ install_npm() {
         echo -e "${GREEN}npm installed successfully!${NC}"
     else
         echo -e "${RED}Failed to install npm.${NC}"
-        exit 1
+        return 1
     fi
 }
 
@@ -149,7 +149,7 @@ install_brakeman() {
             echo -e "${GREEN}Brakeman installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install brakeman.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}brakeman is already installed.${NC}"
@@ -185,7 +185,7 @@ install_metasploit() {
             echo -e "${GREEN}Metasploit installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Metasploit.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}Metasploit is already installed.${NC}"
@@ -222,12 +222,12 @@ install_miranda() {
             else
                 # Display failure message and exit script
                 echo -e "${RED}Failed to move Miranda.${NC}"
-                exit 1
+                return 1
             fi
         else
             # Display failure message if download failed and exit script
             echo -e "${RED}Failed to download Miranda.${NC}"
-            exit 1
+            return 1
         fi
     else
         # Display message if Miranda is already installed
@@ -266,12 +266,12 @@ install_umap() {
             else
                 # Display failure message and exit script
                 echo -e "${RED}Failed to move Umap.${NC}"
-                exit 1
+                return 1
             fi
         else
             # Display failure message if download failed and exit script
             echo -e "${RED}Failed to download Umap.${NC}"
-            exit 1
+            return 1
         fi
     else
         # Display message if Umap is already installed
@@ -401,7 +401,7 @@ install_wifiphisher() {
 
         if [ $? -ne 0 ]; then
             echo -e "${RED}Failed to clone Wifiphisher repository.${NC}"
-            exit 1
+            return 1
         fi
 
         # Fix Python compatibility issue with ConfigParser
@@ -409,7 +409,7 @@ install_wifiphisher() {
         sed -i 's/from ConfigParser import SafeConfigParser/from configparser import ConfigParser/' /tmp/wifiphisher/roguehostapd/config/hostapdconfig.py
 
         # Install Python dependencies and setup
-        cd /tmp/wifiphisher || exit
+        cd /tmp/wifiphisher || return 1
         echo -e "${CYAN}Installing Python dependencies...${NC}"
         sudo pip3 install -r requirements.txt
 
@@ -420,12 +420,12 @@ install_wifiphisher() {
             echo -e "${GREEN}Wifiphisher installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Wifiphisher.${NC}"
-            exit 1
+            return 1
         fi
 
         # Clean up
         echo -e "${YELLOW}Cleaning up...${NC}"
-        cd ~ || exit
+        cd ~ || return 1
         sudo rm -rf /tmp/wifiphisher
     else
         echo -e "${GREEN}Wifiphisher is already installed.${NC}"
@@ -470,7 +470,7 @@ install_dredd() {
             echo -e "${GREEN}Dredd installed successfully!${NC}"
         else
             echo -e "${RED}Failed to install Dredd.${NC}"
-            exit 1
+            return 1
         fi
     else
         echo -e "${GREEN}Dredd is already installed.${NC}"
