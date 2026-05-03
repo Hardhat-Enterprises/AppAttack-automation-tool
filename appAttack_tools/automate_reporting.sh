@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 automate_reporting(){
-set -euo pipefail
 
 usage() {
   cat <<EOF
@@ -39,7 +38,7 @@ fi
 # ensure input exists
 if [[ ! -f "$INPUT_FILE" ]]; then
   echo "[WARNING] Input file not found: $INPUT_FILE" >&2
-  exit 0
+  return 0
 fi
 
 # prepare output directory
