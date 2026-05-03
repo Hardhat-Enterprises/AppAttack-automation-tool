@@ -1,4 +1,3 @@
-
 # If CI env var is set, run both scans non-interactively and exit
 if [[ "${CI:-}" == "true" ]]; then
   echo "[CI] Non-interactive mode: running Trivy + Gitleaks"
@@ -8,8 +7,7 @@ if [[ "${CI:-}" == "true" ]]; then
   exit 0
 fi
 
-set -euo pipefail
-
+automate_cicd_scan() {
 # colors 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -51,10 +49,11 @@ case $choice in
    	;;
    4)
 	echo "Exiting..."
-	exit 0
+	return 0
 	;;
       *)
       	echo -e "${RED}[!] Invalid option. Please run again.${NC}"
-      	exit 1 
+      	return 1
       	;;
 esac
+}
