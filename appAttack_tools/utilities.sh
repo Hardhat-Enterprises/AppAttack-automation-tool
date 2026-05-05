@@ -275,8 +275,9 @@ generate_ai_insights() {
     esac
     done
         else
-	python3 -u "$SCRIPT_DIR/parsers/ollama_integration.py" --prompt "$PROMPT"
-    fi    
+		    INSIGHTS=$(python3 -u "$SCRIPT_DIR/parsers/ollama_integration.py" --prompt "$PROMPT")
+		    echo "$INSIGHTS"
+		fi  
 
 
 
