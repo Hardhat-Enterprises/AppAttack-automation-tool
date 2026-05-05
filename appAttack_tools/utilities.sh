@@ -1,4 +1,5 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # This file contains utility functions used throughout the AppAttack automation toolkit
 
 #Check if GEMINI_API_KEY is set
