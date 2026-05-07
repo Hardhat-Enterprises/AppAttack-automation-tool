@@ -33,23 +33,23 @@ echo -e "${BPurple}              A Professional Pen-Testing/Secure Code Review T
 display_main_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════╗${NC}"
     echo -e "${BYellow}║           Main Menu            ║${NC}"
-    echo -e "${BYellow}╚════════════════════════════════╝${NC}"
+    echo -e "${BYellow}╠════════════════════════════════╣${NC}"
     echo -e "${BCyan}1)${NC} ${White}Penetration Testing Tools${NC}"
     echo -e "${BCyan}2)${NC} ${White}Secure Code Review Tools${NC}"
     echo -e "${BCyan}3)${NC} ${White}IoT Security Tools${NC}"
     echo -e "${BCyan}4)${NC} ${White}Step by Step Guide${NC}"
-    echo -e "${BCyan}5)${NC} ${White}Automated Processes${NC}"  
+    echo -e "${BCyan}5)${NC} ${White}Automated Processes${NC}"
     echo -e "${BCyan}6)${NC} ${White}Container Security Tools${NC}"
     echo -e "${BCyan}7)${NC} ${White}Cloud Security Tools${NC}"
     echo -e "${BCyan}8)${NC} ${White}Mobile Security Tools${NC}"
-    echo -e "${BCyan}0)${NC} ${White}Exit${NC}" 
+    echo -e "${BCyan}0)${NC} ${White}Exit${NC}"
     echo -e "${BYellow}╚════════════════════════════════╝${NC}"
 }
 
 display_mobile_security_tools_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
-    echo -e "${BYellow}║        Mobile Security Tools             ║${NC}"
-    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BYellow}║           Mobile Security Tools            ║${NC}"
+    echo -e "${BYellow}╠════════════════════════════════════════════╣${NC}"
     echo -e "${BCyan}1)${NC} ${White}MobSF: Mobile Security Framework${NC}"
     echo -e "${BCyan}2)${NC} ${White}Start Android Emulator with mitmproxy${NC}"
     echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
@@ -71,7 +71,7 @@ display_mobile_security_tools_menu() {
 display_container_security_tools_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
     echo -e "${BYellow}║        Container Security Tools            ║${NC}"
-    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BYellow}╠════════════════════════════════════════════╣${NC}"
     echo -e "${BCyan}1)${NC} ${White}Trivy: Scan Docker/OCI images for vulnerabilities${NC}"
     echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
@@ -81,7 +81,7 @@ display_container_security_tools_menu() {
 display_penetration_testing_tools_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
     echo -e "${BYellow}║        Penetration Testing Tools           ║${NC}"
-    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BYellow}╠════════════════════════════════════════════╣${NC}"
     echo -e "${BCyan}1)${NC} ${BWhite}nmap${NC}: Network exploration and security auditing tool"
     echo -e "${BCyan}2)${NC} ${BWhite}nikto${NC}: Web server scanner"
     echo -e "${BCyan}3)${NC} ${BWhite}LEGION${NC}: Automated web application security scanner"
@@ -107,7 +107,7 @@ display_penetration_testing_tools_menu() {
 display_secure_code_review_tools_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
     echo -e "${BYellow}║        Secure Code Review Tools            ║${NC}"
-    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BYellow}╠════════════════════════════════════════════╣${NC}"
     echo -e "${BCyan}1)${NC} ${White}osv-scanner: Scan a directory for vulnerabilities${NC}"
     echo -e "${BCyan}2)${NC} ${White}snyk cli: Test code locally or monitor for vulnerabilities${NC}"
     echo -e "${BCyan}3)${NC} ${White}brakeman: Scan a Ruby on Rails application for security vulnerabilities${NC}"
@@ -121,9 +121,9 @@ display_secure_code_review_tools_menu() {
 
 # Function to display IoT Tools menu
 display_iot_security_tools_menu() {
-    echo -e "\n${BYellow}╔══════════════════════════════════════════╗${NC}"
-    echo -e "${BYellow}║            IoT Security Tools            ║${NC}"
-    echo -e "${BYellow}╚══════════════════════════════════════════╝${NC}"
+    echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
+    echo -e "${BYellow}║           IoT Security Tools               ║${NC}"
+    echo -e "${BYellow}╠════════════════════════════════════════════╣${NC}"
     echo -e "${BCyan}1)${NC} ${White}Aircrack-ng${NC}"
     echo -e "${BCyan}2)${NC} ${White}Bettercap${NC}"
     echo -e "${BCyan}3)${NC} ${White}Binwalk${NC}"
@@ -137,14 +137,14 @@ display_iot_security_tools_menu() {
     echo -e "${BCyan}11)${NC} ${White}Wifiphisher${NC}"
     echo -e "${BCyan}12)${NC} ${White}Wireshark${NC}"
     echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
-    echo -e "${BYellow}╚═══════════════════════════════════════════╝${NC}"
+    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
 }
 
 # Function to display Step by Step Guide menu
 display_step_by_step_guide_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
     echo -e "${BYellow}║           Step by Step Guide               ║${NC}"
-    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BYellow}╠════════════════════════════════════════════╣${NC}"
     echo -e "${BCyan}1)${NC} ${White}Learn about Pen Testing tools${NC}"
     echo -e "${BCyan}2)${NC} ${White}Learn about Secure code review tools${NC}"
 	echo -e "${BCyan}3)${NC} ${White}Learn about IoT Security tools${NC}"
@@ -155,8 +155,8 @@ display_step_by_step_guide_menu() {
 # Function to display Automated Processes menu
 display_automated_processes_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
-    echo -e "${BYellow}║        Automated Processes               ║${NC}"
-    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BYellow}║           Automated Processes              ║${NC}"
+    echo -e "${BYellow}╠════════════════════════════════════════════╣${NC}"
     echo -e "${BCyan}1)${NC} ${White}Reconnaissance${NC}"
     echo -e "${BCyan}2)${NC} ${White}Vulnerability Scanning${NC}"
     echo -e "${BCyan}3)${NC} ${White}Exploitation${NC}"
@@ -365,7 +365,7 @@ handle_container_security_tools() {
 display_cloud_security_menu() {
     echo -e "\n${BYellow}╔════════════════════════════════════════════╗${NC}"
     echo -e "${BYellow}║           Cloud Security Tools             ║${NC}"
-    echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
+    echo -e "${BYellow}╠════════════════════════════════════════════╣${NC}"
     echo -e "${BCyan}1)${NC} ${White}ScoutSuite (Audit AWS/Azure/GCP)${NC}"
     echo -e "${BCyan}0)${NC} ${White}Go Back${NC}"
     echo -e "${BYellow}╚════════════════════════════════════════════╝${NC}"
