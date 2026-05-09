@@ -1,4 +1,5 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # This file contains utility functions used throughout the AppAttack automation toolkit
 
 #Check if GEMINI_API_KEY is set
@@ -242,10 +243,10 @@ generate_ai_insights() {
         read -r -p "Enter 1 or 2: " choice
         case "$choice" in
         1)
-        #local
-        python3 -u ./ollama_integration.py --prompt "$PROMPT"
-        break
-        ;;
+		#local
+		INSIGHTS=$(python3 -u "$SCRIPT_DIR/parsers/ollama_integration.py" --prompt "$PROMPT")
+		break
+		;;
         2)
         #cloud
         INSIGHTS="$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$API_KEY" \
@@ -274,8 +275,9 @@ generate_ai_insights() {
     esac
     done
         else
-    python3 -u ./ollama_integration.py --prompt "$PROMPT"
-    fi    
+		    INSIGHTS=$(python3 -u "$SCRIPT_DIR/parsers/ollama_integration.py" --prompt "$PROMPT")
+		    echo "$INSIGHTS"
+		fi  
 
 
 
