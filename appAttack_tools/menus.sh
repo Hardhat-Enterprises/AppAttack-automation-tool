@@ -334,7 +334,7 @@ handle_automated_processes_menu() {
             3) run_exploitation_menu ;; #auto_exploitation.sh
             4) automate_post_exploitation ;; #automate_post_exploitation.sh - this is poorly implemented and exits after executing
             5) automate_reporting ;; #automate_reporting.sh - this is poorly implemented and exits after executing
-            6) run_footprinting_workflow ;; #automate_footprinting.sh
+            6) run_footprinting_menu_handler ;; #automate_footprinting.sh
             7) run_api_recon_process ;; #autopate_api_recon.sh
             8) create_delta_report ;; #create_delta_report.sh
             9) create_trend_analysis_report ;; #create_trend_analysis_report.sh
@@ -442,9 +442,9 @@ run_reporting_process() {
     echo "Final report generated at $report_file"
 }
 
-run_footprinting_workflow() {
+run_footprinting_menu_handler() {
     echo "Running Web Application Footprinting..."
-    run_web_footprinting
+    run_footprinting_workflow
 }
 
 run_api_recon_process() {
